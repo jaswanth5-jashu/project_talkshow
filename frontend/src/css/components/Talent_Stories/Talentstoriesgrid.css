@@ -1,0 +1,203 @@
+.talentstories_grid{
+  padding:80px 2%;
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:30px;
+  max-width:1400px;
+  margin:auto;
+  background-color: #ffffff;
+  background-image: 
+    radial-gradient(rgba(255, 0, 0, 0.05) 2px, transparent 2px),
+    linear-gradient(135deg, rgba(255,0,0,0.01) 0%, transparent 100%),
+    linear-gradient(to right, rgba(0,0,0,0.015) 1px, transparent 1px);
+  background-size: 40px 40px, 100% 100%, 120px 120px;
+  position: relative;
+}
+
+.talentstories_grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,0,0,0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.talent_card{
+cursor:pointer;
+transition:all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+border-radius:18px;
+background: #fff;
+box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+position: relative;
+}
+
+.talent_card:hover{
+transform:translateY(-12px);
+box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.talent_image{
+position:relative;
+border-radius:18px;
+overflow:hidden;
+height:380px;
+}
+
+.talent_image img{
+width:100%;
+height:100%;
+object-fit:cover;
+transition: transform 0.7s ease;
+}
+
+.talent_card:hover .talent_image img{
+transform:scale(1.08) rotate(1deg);
+}
+
+.talent_overlay{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+padding:40px 25px 25px;
+color:white;
+background:linear-gradient(
+transparent,
+rgba(0,0,0,0.6) 20%,
+rgba(0,0,0,0.95)
+);
+transition: padding-bottom 0.4s ease;
+}
+
+.play_icon_center {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  font-size: 80px;
+  color: white;
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 2;
+  filter: drop-shadow(0 0 15px rgba(255,0,0,0.4));
+}
+
+.talent_card:hover .play_icon_center {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.talent_card:hover .talent_overlay{
+padding-bottom: 35px;
+}
+
+.talent_category{
+background:linear-gradient(135deg, #ff0000, #cc0000);
+color: #fff;
+padding:6px 16px;
+border-radius:24px;
+font-size:12px;
+font-weight:700;
+display:inline-block;
+margin-bottom:12px;
+box-shadow: 0 4px 10px rgba(255,0,0,0.3);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.talent_card:hover .talent_category{
+transform: translateY(-3px) scale(1.05);
+box-shadow: 0 6px 15px rgba(255,0,0,0.5);
+}
+
+.talent_overlay h3{
+font-size:24px;
+font-weight:800;
+margin-bottom:8px;
+transition: color 0.3s ease;
+}
+
+.talent_card:hover .talent_overlay h3{
+color: #ffcccc;
+}
+
+.talent_location{
+font-size:14px;
+display:flex;
+align-items:center;
+gap:6px;
+opacity:0.9;
+font-weight: 500;
+}
+
+.talent_desc{
+margin-top:14px;
+font-size:14.5px;
+line-height:1.6;
+color:#ddd;
+opacity: 0.9;
+transform: translateY(0);
+transition: all 0.3s ease;
+}
+
+.talent_card:hover .talent_desc{
+color: #fff;
+opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .talentstories_grid {
+    padding: 60px 5%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .talentstories_grid {
+    padding: 40px 4%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  .talent_image {
+    height: 220px;
+    border-radius: 12px;
+  }
+  .talent_card {
+    border-radius: 12px;
+  }
+  .talent_overlay {
+    padding: 20px 12px 12px;
+  }
+  .talent_overlay h3 {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .talent_desc {
+    display: none;
+  }
+  .talent_category {
+    font-size: 9px;
+    padding: 4px 8px;
+    margin-bottom: 6px;
+  }
+  .talent_location {
+    font-size: 11px;
+  }
+}
+
+/* Mobile Responsive Media Query */
+@media (max-width: 768px) {
+
+}
+
+
+/* Tablet Responsive Media Query */
+@media (max-width: 1024px) {
+
+}
+
+
+/* Mobile Small Responsive Media Query */
+@media (max-width: 480px) {
+
+}

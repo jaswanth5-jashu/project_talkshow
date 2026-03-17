@@ -1,0 +1,205 @@
+.episodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 40px;
+    padding: 60px 5% 100px;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #ffffff;
+    background-image: 
+        radial-gradient(rgba(255, 0, 0, 0.05) 2px, transparent 2px),
+        linear-gradient(to right, rgba(0,0,0,0.01) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.01) 1px, transparent 1px);
+    background-size: 30px 30px, 100px 100px, 100px 100px;
+    position: relative;
+}
+
+.episode-card {
+    position: relative;
+    aspect-ratio: 10/14;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.episode-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25);
+    border-color: #ff0000;
+}
+
+.episode-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.episode-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.episode-card:hover .episode-image img {
+    transform: scale(1.15);
+}
+
+.episode-poster-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.95) 0%,
+        rgba(0,0,0,0.4) 40%,
+        rgba(255,0,0,0.05) 70%,
+        transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 30px;
+    transition: all 0.5s ease;
+}
+
+.episode-card:hover .episode-poster-overlay {
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,0.6) 50%,
+        rgba(255,0,0,0.1) 80%,
+        transparent 100%
+    );
+}
+
+.episode-content {
+    transform: translateY(20px);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.episode-card:hover .episode-content {
+    transform: translateY(0);
+}
+
+.episode-date {
+    color: #ff0000;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.episode-name {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+}
+
+.episode-bio {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0;
+    transition: all 0.5s ease 0.1s;
+}
+
+.episode-card:hover .episode-bio {
+    opacity: 1;
+}
+
+.poster-play-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: #ff0000;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    opacity: 0;
+    transform: scale(0.5) rotate(-45deg);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.episode-card:hover .poster-play-btn {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* Internal Glowing Frame */
+.episode-card::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 5;
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+.episode-card:hover::before {
+    border-color: rgba(255, 0, 0, 0.5);
+    box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.2);
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+}
+
+/* Entrance Animation */
+.animate-card-in {
+    animation: posterIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes posterIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(60px) scale(0.95); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
+}
+
+@media (max-width: 768px) {
+    .episodes-grid {
+        grid-template-columns: 1fr;
+        padding: 40px 5%;
+    }
+    .episode-name {
+        font-size: 1.5rem;
+    }
+}
+
+/* Tablet Responsive Media Query */
+@media (max-width: 1024px) {
+
+}
+
+
+/* Mobile Small Responsive Media Query */
+@media (max-width: 480px) {
+
+}

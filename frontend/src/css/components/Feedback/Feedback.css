@@ -1,0 +1,235 @@
+.feedback-page {
+  padding: 40px 6% 80px;
+  background: #ffffff;
+  background-image: 
+    radial-gradient(rgba(255, 0, 0, 0.04) 2px, transparent 2px),
+    linear-gradient(to right, rgba(0,0,0,0.01) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.01) 1px, transparent 1px);
+  background-size: 40px 40px, 100px 100px, 100px 100px;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.feedback-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(255, 0, 0, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 0, 0, 0.03) 0px, transparent 50%);
+  pointer-events: none;
+}
+
+.feedback-form-card input::placeholder,
+.feedback-form-card textarea::placeholder {
+  color: #000000;
+  opacity: 1;
+}
+
+.feedback-hero {
+  text-align: center;
+  margin-bottom: 80px;
+  position: relative;
+}
+
+.feedback-hero h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #111;
+  margin-bottom: 20px;
+  animation: slideInDown 0.8s ease-out;
+}
+
+.feedback-hero p {
+  color: #ff0000;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  animation: fadeIn 1.2s ease-out;
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.feedback-container {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* FORM CARD */
+.feedback-form-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 30px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  position: sticky;
+  top: 120px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.feedback-form-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #111;
+}
+
+.feedback-form-card input,
+.feedback-form-card textarea {
+  width: 100%;
+  background: #fbfbfb;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 15px 20px;
+  border-radius: 12px;
+  color: #333;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.feedback-form-card textarea {
+  height: 150px;
+  resize: none;
+}
+
+.feedback-form-card input:focus,
+.feedback-form-card textarea:focus {
+  outline: none;
+  border-color: #ff0000;
+  background: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.05);
+}
+
+.feedback-form-card button {
+  width: 100%;
+  padding: 18px;
+  background: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.feedback-form-card button:hover {
+  background: #111;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* FEEDBACK GRID */
+.feedback-showcase h2 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #ff0000;
+  text-transform: uppercase;
+}
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.modern-feedback-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  animation: fadeIn 0.8s ease backwards;
+}
+
+.modern-feedback-card:hover {
+  background: #ffffff;
+  border-color: #ff0000;
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  background: #ff0000;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.user-info h3 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: #111;
+}
+
+.modern-feedback-card p {
+  color: #666;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+@media (max-width: 1000px) {
+  .feedback-container {
+    grid-template-columns: 1fr;
+  }
+  .feedback-form-card {
+    position: relative;
+    top: 0;
+  }
+}
+
+/* Mobile Responsive Media Query */
+@media (max-width: 768px) {
+
+}
+
+
+/* Tablet Responsive Media Query */
+@media (max-width: 1024px) {
+
+}
+
+
+/* Mobile Small Responsive Media Query */
+@media (max-width: 480px) {
+
+}

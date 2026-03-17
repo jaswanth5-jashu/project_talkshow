@@ -1,0 +1,270 @@
+.episode-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    animation: cinematicFadeIn 0.8s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+@keyframes cinematicFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.overlay-vignette {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cinematic-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.close-overlay-cinematic {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+.close-overlay-cinematic:hover {
+    background: #ff0000;
+    border-color: #ff0000;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.main-stage {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    padding: 60px;
+    gap: 40px;
+    align-items: center;
+}
+
+.promo-player-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #050505;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,1), 0 0 100px rgba(255,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: playerSlideUp 1s cubic-bezier(0.16, 1, 0.3, 1) delay 0.2s backwards;
+}
+
+@keyframes playerSlideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.promo-video-main {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.side-metadata {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    animation: metadataFade 1s cubic-bezier(0.16, 1, 0.3, 1) delay 0.4s backwards;
+}
+
+@keyframes metadataFade {
+    from { transform: translateX(40px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.meta-glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 50px 40px;
+    border-radius: 24px;
+    width: 100%;
+}
+
+.meta-label {
+    display: block;
+    color: #ff0000;
+    font-weight: 900;
+    letter-spacing: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.meta-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 0.9;
+    margin-bottom: 30px;
+    letter-spacing: -2px;
+}
+
+.meta-divider {
+    width: 60px;
+    height: 4px;
+    background: #ff0000;
+    margin-bottom: 30px;
+}
+
+.meta-details {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.detail-item label {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.detail-item span {
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.meta-desc {
+    color: #999;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 50px;
+}
+
+.cinematic-watch-btn {
+    width: 100%;
+    padding: 22px;
+    background: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cinematic-watch-btn:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(255,255,255,0.2);
+}
+
+.btn-icon {
+    font-size: 1.4rem;
+}
+
+.cinematic-bottom-bar {
+    padding: 40px 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.3;
+}
+
+.scroll-hint span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.mouse {
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to bottom, #fff, transparent);
+    animation: scrollPulse 2s infinite;
+}
+
+@keyframes scrollPulse {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    50.1% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+@media (max-width: 1200px) {
+    .main-stage {
+        grid-template-columns: 1fr;
+        padding: 40px;
+        overflow-y: auto;
+    }
+    
+    .side-metadata {
+        margin-top: 40px;
+    }
+    
+    .meta-title {
+        font-size: 2.5rem;
+    }
+}
+
+
+/* Mobile Responsive Media Query */
+@media (max-width: 768px) {
+
+}
+
+
+/* Tablet Responsive Media Query */
+@media (max-width: 1024px) {
+
+}
+
+
+/* Mobile Small Responsive Media Query */
+@media (max-width: 480px) {
+
+}
