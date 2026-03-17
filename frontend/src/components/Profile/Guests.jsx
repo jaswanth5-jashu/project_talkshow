@@ -15,8 +15,7 @@ function Guests() {
         setGuests(data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error fetching guests:", err);
+      .catch(() => {
         setLoading(false);
       });
   }, []);

@@ -17,8 +17,8 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = (userData) => {
-        const { access, refresh, username, email, profile } = userData;
-        const userInfo = { username, email, profile };
+        const { access, refresh, username, email, full_name, profile } = userData;
+        const userInfo = { username, email, full_name, profile };
         
         localStorage.setItem("talkshow_user", JSON.stringify(userInfo));
         localStorage.setItem("talkshow_access", access);

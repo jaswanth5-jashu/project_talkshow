@@ -53,7 +53,7 @@ function Profile() {
         setProfilePreview(getImageUrl(data.profile));
       }
     } catch (err) {
-      console.error("Failed to fetch latest profile data");
+      // Identity fetch failed silently
     }
   };
 

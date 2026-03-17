@@ -135,8 +135,7 @@ function Play() {
 
   const getFullUrl = (path) => {
     if (!path) return "";
-    if (path.startsWith("http")) return path;
-    return getMediaBase() + path;
+    return path.startsWith("http") ? path : getMediaBase() + path;
   };
 
   return (

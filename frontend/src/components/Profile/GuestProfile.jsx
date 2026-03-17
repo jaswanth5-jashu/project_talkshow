@@ -50,8 +50,6 @@ function GuestProfile() {
   }
 
   const handleVideoClick = (episodeId) => {
-    // Navigate to Play page with episode ID
-    // We'll prefix with 'ep_' to help Play.jsx distinguish
     navigate(`/play/ep_${episodeId}`);
   };
 

@@ -60,6 +60,10 @@ function LoginRegister() {
   function change(e) {
     if (e.target.name === "profile") {
       setForm({ ...form, profile: e.target.files[0] });
+    } else if (e.target.name === "email") {
+      const email = e.target.value;
+      const username = email.split("@")[0] || "";
+      setForm({ ...form, email, username });
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
     }

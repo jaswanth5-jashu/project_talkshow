@@ -34,11 +34,11 @@ def send_cool_email(subject, title, message, to_email, attachment=None):
         if attachment:
             try:
                 msg.attach(attachment.name, attachment.read(), attachment.content_type)
-            except Exception as attach_err:
-                print(f"Attachment failed: {attach_err}")
+            except Exception:
+                pass
         msg.send()
-    except Exception as e:
-        print(f"Email failed: {e}")
+    except Exception:
+        pass
 
 class RegisterView(APIView):
     def post(self, request):
@@ -53,10 +53,16 @@ class RegisterView(APIView):
 
         user = Registration.objects.filter(email=email).first()
 
+        if not username and email:
+            username = email.split('@')[0]
+
         if not password:
             otp = str(random.randint(100000, 999999))
             if user:
                 user.otp = otp
+                user.username = username or user.username
+                user.full_name = full_name or user.full_name
+                user.phone_number = phone or user.phone_number
                 user.is_verified = False
                 user.save()
             else:
@@ -189,7 +195,7 @@ class FeedbackView(generics.ListCreateAPIView):
                 <b>Phone:</b> {fb.phone_number}<br>
                 <b>Message:</b><br>{fb.feedback}
                 """
-                send_cool_email("New Feedback Received", "Feedback Alert", admin_msg, settings.EMAIL_HOST_USER)
+                send_cool_email("New Feedback Received", "Feedback Alert", admin_msg, settings.ADMIN_EMAIL)
         return response
 
 class ContactView(generics.ListCreateAPIView):
@@ -210,7 +216,7 @@ class ContactView(generics.ListCreateAPIView):
                 <b>Subject:</b> {c.subject}<br>
                 <b>Message:</b><br>{c.message}
                 """
-                send_cool_email("New Contact Request", "Contact Alert", admin_msg, settings.EMAIL_HOST_USER)
+                send_cool_email("New Contact Request", "Contact Alert", admin_msg, settings.ADMIN_EMAIL)
         return response
 
 class EpisodeView(generics.ListCreateAPIView):
@@ -255,7 +261,7 @@ class TalentSubmissionView(generics.CreateAPIView):
             """
             
             attach_file = talent.talentvideo if not is_large else None
-            send_cool_email("New Talent Application", "Action Required", admin_msg, settings.EMAIL_HOST_USER, attachment=attach_file)
+            send_cool_email("New Talent Application", "Action Required", admin_msg, settings.ADMIN_EMAIL, attachment=attach_file)
         return response
 
 class UpdateTalentView(generics.RetrieveUpdateDestroyAPIView):

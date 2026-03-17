@@ -53,7 +53,6 @@ function Talentstoriesgrid({ search = "" }) {
 
       {filtered.map(function (talent, index) {
 
-        // Use getMediaBase if the thumbnail is a relative path
         const imageUrl = (talent.thumbnail && talent.thumbnail.startsWith("http"))
           ? talent.thumbnail 
           : (talent.thumbnail ? `${getMediaBase()}${talent.thumbnail}` : "");
