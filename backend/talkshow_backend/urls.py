@@ -1,10 +1,16 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import (
     RegisterView, VerifyOTP, LoginView, ForgotPassword, VerifyResetOTP, 
     ResetPassword, HomeView, ProfileView, UpdateProfileView, FeedbackView, 
     ContactView, EpisodeView, UpdateEpisodeView, TalentView, 
     TalentSubmissionView, UpdateTalentView, UpdateRegistrationView, 
-    GetRegistrationView
+    GetRegistrationView, TalentRoleView, ToggleLikeView, CommentView,
+    ToggleSubscriptionView, UserTalentVideosView, MySubmissionsView, DismissSubmissionView,
+    DeleteTalentSubmissionView, DeleteCommentView, NotificationListView, MarkNotificationReadView, UserPublicProfileView,
+    UserSearchView, EpisodeSearchView, GuestSearchView, TalentSearchView,
+    FollowersListView, FollowingListView
 )
 
 urlpatterns = [
@@ -26,4 +32,22 @@ urlpatterns = [
     path("talent/<int:pk>/", UpdateTalentView.as_view()),
     path("update-profile/", UpdateRegistrationView.as_view()),
     path("get-profile/", GetRegistrationView.as_view()),
-]
+    path("roles/", TalentRoleView.as_view()),
+    path("talent/<int:pk>/like/", ToggleLikeView.as_view()),
+    path("talent/<int:pk>/comments/", CommentView.as_view()),
+    path("subscribe/<int:pk>/", ToggleSubscriptionView.as_view()),
+    path("my-videos/", UserTalentVideosView.as_view()),
+    path("my-submissions/", MySubmissionsView.as_view()),
+    path("dismiss-submission/<int:pk>/", DismissSubmissionView.as_view()),
+    path("delete-submission/<int:pk>/", DeleteTalentSubmissionView.as_view()),
+    path("delete-comment/<int:pk>/", DeleteCommentView.as_view()),
+    path("notifications/", NotificationListView.as_view()),
+    path("notifications/<int:pk>/read/", MarkNotificationReadView.as_view()),
+    path("user/<int:pk>/", UserPublicProfileView.as_view()),
+    path('search-users/', UserSearchView.as_view(), name='search-users'),
+    path('search-episodes/', EpisodeSearchView.as_view(), name='search-episodes'),
+    path('search-guests/', GuestSearchView.as_view(), name='search-guests'),
+    path('search-talents/', TalentSearchView.as_view(), name='search-talents'),
+    path('user/<int:pk>/followers/', FollowersListView.as_view(), name='user-followers'),
+    path('user/<int:pk>/following/', FollowingListView.as_view(), name='user-following'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

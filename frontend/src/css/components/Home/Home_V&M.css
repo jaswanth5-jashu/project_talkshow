@@ -124,20 +124,3 @@ border-radius:50%;
     margin-bottom: 20px;
   }
 }
-
-/* Mobile Responsive Media Query */
-@media (max-width: 768px) {
-
-}
-
-
-/* Tablet Responsive Media Query */
-@media (max-width: 1024px) {
-
-}
-
-
-/* Mobile Small Responsive Media Query */
-@media (max-width: 480px) {
-
-}

@@ -22,7 +22,7 @@ function GuestCard({ guest, index }) {
     <div 
       className="guest-card animate-neat-in" 
       onClick={handleClick}
-      style={{ animationDelay: `${index * 0.1}s` }}
+      style={{ "--index": index }}
     >
       
       <img src={guest.profile} alt={guest.name} />

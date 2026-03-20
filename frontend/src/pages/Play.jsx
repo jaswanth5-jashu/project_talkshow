@@ -1,14 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { FiArrowLeft, FiPlay, FiPause, FiRotateCcw, FiRotateCw, FiMaximize } from "react-icons/fi";
-import { getTalentById } from "../api/talentstoriesapi";
+import { FiArrowLeft, FiPlay, FiPause, FiRotateCcw, FiRotateCw, FiMaximize, FiHeart, FiMessageSquare, FiUserPlus, FiCheck } from "react-icons/fi";
+import { getTalentById, toggleLike, getComments, postComment, toggleSubscribe, deleteComment } from "../api/talentstoriesapi";
 import { getEpisodeById } from "../api/guestapi";
-import { getMediaBase } from "../api/api";
+import { apiClient, getMediaBase } from "../api/api";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../css/components/Play/Play.css";
 
 function Play() {
   const { videoId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [videoData, setVideoData] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -16,6 +19,13 @@ function Play() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
+  
+  const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [showComments, setShowComments] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const videoRef = useRef(null);
   const containerRef = useRef(null);
@@ -25,6 +35,25 @@ function Play() {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const formatRelativeTime = (dateString) => {
+    const now = new Date();
+    const then = new Date(dateString);
+    const diffInSeconds = Math.floor((now - then) / 1000);
+
+    if (diffInSeconds < 60) return "Just now";
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays}d`;
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    if (diffInWeeks < 4) return `${diffInWeeks}w`;
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) return `${diffInMonths}mo`;
+    return `${Math.floor(diffInDays / 365)}y`;
   };
 
   const skipForward = useCallback(() => {
@@ -112,8 +141,13 @@ function Play() {
             title: data.name,
             desc: data.desc_of_talent,
             videoUrl: data.talentvideo,
-            subtitle: `${data.talent} - Performance`
+            subtitle: `${data.talent} - Performance`,
+            uploaderId: data.user,
+            id: data.id
           });
+          setLikes(data.likes_count || 0);
+          setIsLiked(data.is_liked || false);
+          setIsSubscribed(data.is_following || false);
           setIsYouTube(false);
         } else {
           setIsYouTube(true);
@@ -131,6 +165,48 @@ function Play() {
     } else {
       containerRef.current.requestFullscreen();
     }
+  };
+
+  const handleLike = () => {
+    if(!videoData?.id) return;
+    toggleLike(videoData.id).then(res => {
+      setIsLiked(res.liked);
+      setLikes(res.count);
+    }).catch(console.error);
+  };
+
+  const loadCommentsList = () => {
+    if(!videoData?.id) return;
+    getComments(videoData.id).then(res => setComments(res)).catch(console.error);
+  };
+  
+  useEffect(() => {
+    if(videoData?.id) {
+        loadCommentsList();
+    }
+  }, [videoData?.id]);
+  
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if(!commentText.trim() || !videoData?.id) return;
+    postComment(videoData.id, commentText).then(res => {
+      setComments([res, ...comments]);
+      setCommentText("");
+    }).catch(console.error);
+  };
+
+  const handleDeleteComment = (commentId) => {
+    if(!window.confirm("Delete this comment?")) return;
+    deleteComment(commentId).then(() => {
+      setComments(comments.filter(c => c.id !== commentId));
+    }).catch(console.error);
+  };
+
+  const handleFollow = () => {
+    if(!videoData?.uploaderId) return;
+    toggleSubscribe(videoData.uploaderId).then(res => {
+      setIsSubscribed(res.subscribed);
+    }).catch(console.error);
   };
 
   const getFullUrl = (path) => {
@@ -153,12 +229,109 @@ function Play() {
             <span>EXIT THEATER</span>
           </button>
           <div className="nav-metadata">
-             <span className="live-pill">WATCHING NOW</span>
-             <span className="nav-title">{videoData?.title || "Loading..."}</span>
+             <span className="live-pill">TALKSHOW THEATER</span>
           </div>
         </div>
 
+        <div className="theater-header-cinematic">
+           <span className="info-category">
+             {videoData?.subtitle || "TALKSHOW EXCLUSIVE"}
+           </span>
+           <div className="theater-header-main-row">
+             <div className="title-bio-stack">
+               <h1 className="cinematic-title-top">{videoData?.title || "UNNAMED STORY"}</h1>
+               <p className="cinematic-bio-top">
+                 {videoData?.desc || "Experience the depth of talent and story in this exclusive feature."}
+               </p>
+             </div>
+
+             {videoData?.uploaderId && (
+               <Link to={`/user/${videoData.uploaderId}`} className="uploader-mini-card">
+                 <div className="uploader-avatar-wrapper">
+                   <img src={getFullUrl(videoData.uploader_profile)} alt={videoData.uploader_username} className="uploader-avatar" />
+                   <div className="avatar-ring"></div>
+                 </div>
+                 <div className="uploader-meta">
+                   <span className="uploader-label">STORY BY</span>
+                   <span className="uploader-name">{videoData.uploader_full_name || videoData.uploader_username}</span>
+                 </div>
+               </Link>
+             )}
+           </div>
+        </div>
+
         <div className="theater-main">
+          <div className="theater-left-actions">
+             <div className="vertical-social-actions">
+                {videoData?.id && (
+                  <div className="social-stack">
+                    <button className={`action-pill-vertical ${isLiked ? 'active' : ''}`} onClick={handleLike}>
+                      <FiHeart fill={isLiked ? 'white' : 'transparent'} /> 
+                      <span>{likes}</span>
+                    </button>
+                    <div className="action-pill-vertical static">
+                      <FiMessageSquare /> 
+                      <span>{comments.length}</span>
+                    </div>
+                    {videoData?.uploaderId && user?.id !== videoData.uploaderId && (
+                      <button className={`action-pill-vertical follow ${isSubscribed ? 'following' : ''}`} onClick={handleFollow}>
+                        {isSubscribed ? <FiCheck /> : <FiUserPlus />}
+                      </button>
+                    )}
+                  </div>
+                )}
+             </div>
+
+             <div className="theater-comments-box-left">
+                  <div className="comments-header-cinematic">
+                    <h3>REACTIONS</h3>
+                  </div>
+
+                  <form onSubmit={handleCommentSubmit} className="comment-input-wrapper-mini">
+                    <input 
+                      type="text" 
+                      value={commentText} 
+                      onChange={(e) => setCommentText(e.target.value)} 
+                      placeholder="Share thoughts..."
+                    />
+                    <button type="submit" disabled={!commentText.trim()}>SEND</button>
+                  </form>
+
+                  <div className="comments-scroll-area-left">
+                    {comments.map(c => (
+                       <div key={c.id} className="comment-thread-item-mini">
+                         <div className="comment-avatar-link-wrapper">
+                           <Link to={`/user/${c.user}`}>
+                             <img src={getFullUrl(c.user_profile)} alt={c.username} className="commenter-avatar" />
+                           </Link>
+                         </div>
+                         <div className="comment-content-mini">
+                           <div className="comment-user-info">
+                             <div className="author-meta-studio">
+                               <Link to={`/user/${c.user}`} className="comment-author-link">
+                                 {c.full_name || c.username}
+                               </Link>
+                               <span className="comment-dot">•</span>
+                               <span className="comment-time-relative">{formatRelativeTime(c.created_at)}</span>
+                             </div>
+                           </div>
+                           <p className="comment-body-text-mini">{c.text}</p>
+                         </div>
+                        {user?.id === c.user && (
+                          <button 
+                            onClick={() => handleDeleteComment(c.id)}
+                            className="delete-comment-btn-mini"
+                          >
+                            ✖
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    {comments.length === 0 && <div className="no-comments-placeholder-mini">Be the first to react.</div>}
+                  </div>
+                </div>
+          </div>
+
           <div className="video-hero-unit">
              {isYouTube ? (
                 <div className="youtube-wrapper-cinematic">
@@ -174,7 +347,7 @@ function Play() {
                 <div className="native-player-box">
                   <video
                     ref={videoRef}
-                    src={videoData ? getFullUrl(videoData.videoUrl) : ""}
+                    src={videoData ? getFullUrl(videoData.videoUrl) : null}
                     className="cinematic-video-element"
                     onClick={togglePlay}
                     onTimeUpdate={onTimeUpdate}
@@ -228,24 +401,6 @@ function Play() {
                   </div>
                 </div>
              )}
-          </div>
-
-          <div className="theater-sidebar">
-             <div className="info-glass-panel">
-                <span className="info-category">
-                  {videoData?.subtitle || "TALKSHOW EXCLUSIVE"}
-                </span>
-                <h1 className="info-title">{videoData?.title}</h1>
-                <div className="info-separator"></div>
-                <p className="info-description">
-                  {videoData?.desc || "Experience the depth of talent and story in this exclusive feature."}
-                </p>
-                
-                <div className="interactive-badges">
-                   <div className="badge">4K ULTRA HD</div>
-                   <div className="badge">EXCLUSIVE</div>
-                </div>
-             </div>
           </div>
         </div>
 

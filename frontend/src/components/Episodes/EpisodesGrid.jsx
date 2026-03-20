@@ -9,8 +9,7 @@ import AuthGuard from "../Common/AuthGuard";
 import "../../css/components/episodes/EpisodesGrid.css";
 import "../../css/components/episodes/EpisodeOverlay.css";
 
-function EpisodesGrid() {
-  const [episodes, setEpisodes] = useState([]);
+function EpisodesGrid({ search, episodes }) {
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
   const [showGuard, setShowGuard] = useState(false);
@@ -18,9 +17,10 @@ function EpisodesGrid() {
   const { isAuthenticated } = useAuth();
   const videoRef = useRef(null);
 
-  useEffect(() => {
-    getEpisodes().then((data) => setEpisodes(data));
-  }, []);
+  const filteredEpisodes = episodes.filter(episode => 
+    episode.name.toLowerCase().includes((search || "").toLowerCase()) ||
+    (episode.bio && episode.bio.toLowerCase().includes((search || "").toLowerCase()))
+  );
 
   const handleEpisodeClick = (episode) => {
     setSelectedEpisode(episode);
@@ -48,12 +48,12 @@ function EpisodesGrid() {
 
   return (
     <div className="episodes-grid">
-      {episodes.map((episode, index) => (
+      {filteredEpisodes.map((episode, index) => (
         <div 
           key={episode.id} 
           className="episode-card animate-card-in" 
           onClick={() => handleEpisodeClick(episode)}
-          style={{ cursor: 'pointer', animationDelay: `${index * 0.16}s` }}
+          style={{ "--index": index }}
         >
           <div className="episode-image">
             <img src={episode.thumbnail || episode.guest_image} alt={episode.name} />

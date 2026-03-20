@@ -8,6 +8,7 @@ import {
   verifyOtpAPI,
   registerUser,
   googleLogin,
+  getRoles,
 } from "../../api/loginregisterapi";
 import { useAuth } from "../../context/AuthContext";
 
@@ -19,6 +20,7 @@ function LoginRegister() {
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [regStep, setRegStep] = useState(1);
 
   const [timer, setTimer] = useState(0);
 
@@ -35,7 +37,16 @@ function LoginRegister() {
     password: "",
     confirm_password: "",
     profile: null,
+    role: "",
+    gender: "",
+    bio: "",
   });
+
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    getRoles().then(data => setRoles(data)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (timer > 0) {
@@ -46,6 +57,15 @@ function LoginRegister() {
       return () => clearTimeout(t);
     }
   }, [timer]);
+
+  useEffect(() => {
+    if (isLogin) {
+      setRegStep(1);
+      setOtpSent(false);
+      setOtpVerified(false);
+      setOtp(["", "", "", "", "", ""]);
+    }
+  }, [isLogin]);
 
   useEffect(() => {
     if (message) {
@@ -60,9 +80,9 @@ function LoginRegister() {
   function change(e) {
     if (e.target.name === "profile") {
       setForm({ ...form, profile: e.target.files[0] });
-    } else if (e.target.name === "email") {
+    } else if (e.target.name === "email" && !isLogin) {
       const email = e.target.value;
-      const username = email.split("@")[0] || "";
+      const username = form.username || email.split("@")[0] || "";
       setForm({ ...form, email, username });
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -74,11 +94,18 @@ function LoginRegister() {
 
     const newOtp = [...otp];
     newOtp[index] = value;
-
     setOtp(newOtp);
 
     if (value && index < 5) {
-      document.querySelectorAll(".otpBoxes input")[index + 1].focus();
+      const nextInput = document.querySelectorAll(".otpBoxes input")[index + 1];
+      if (nextInput) nextInput.focus();
+    }
+  }
+
+  function handleOtpKeyDown(e, index) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const prevInput = document.querySelectorAll(".otpBoxes input")[index - 1];
+      if (prevInput) prevInput.focus();
     }
   }
 
@@ -86,8 +113,8 @@ function LoginRegister() {
     sendOtpAPI(form.email).then(function (data) {
       if (data.message) {
         setOtpSent(true);
+        setRegStep(2);
         setTimer(40);
-
         setMessage("OTP sent to email");
         setMsgType("success");
       } else {
@@ -102,7 +129,7 @@ function LoginRegister() {
       if (data.message) {
         setOtpVerified(true);
         setOtpSent(false);
-
+        setRegStep(3);
         setMessage("OTP verified");
         setMsgType("success");
       } else {
@@ -115,10 +142,9 @@ function LoginRegister() {
   function register(e) {
     e.preventDefault();
 
-    if (!otpVerified) {
+    if (form.email && !otpVerified) {
       setMessage("Verify OTP first");
       setMsgType("error");
-
       return;
     }
 
@@ -142,12 +168,16 @@ function LoginRegister() {
           password: "",
           confirm_password: "",
           profile: null,
+          role: "",
+          gender: "",
+          bio: "",
         });
 
         setOtp(["", "", "", "", "", ""]);
 
         setOtpSent(false);
         setOtpVerified(false);
+        setRegStep(1);
         setTimer(0);
 
         setIsLogin(true);
@@ -161,7 +191,9 @@ function LoginRegister() {
   function login(e) {
     e.preventDefault();
 
-    loginUser(form.email, form.password).then(function (data) {
+    const identifier = form.username || form.email;
+
+    loginUser(identifier, form.password).then(function (data) {
       if (data.message) {
         setMessage("Login successful");
         setMsgType("success");
@@ -180,7 +212,6 @@ function LoginRegister() {
         {message && <div className={`msg-box ${msgType}`}>{message}</div>}
 
         <div className="box">
-          {/* LOGIN */}
 
           <div className={`form ${!isLogin ? "hide" : ""}`}>
             <h1>Welcome Back</h1>
@@ -189,9 +220,9 @@ function LoginRegister() {
 
             <form onSubmit={login}>
               <input
-                type="email"
+                type="text"
                 name="email"
-                placeholder="Email Address"
+                placeholder="Email or Username"
                 onChange={change}
                 required
               />
@@ -231,89 +262,132 @@ function LoginRegister() {
             </form>
           </div>
 
-          {/* REGISTER */}
-
           <div className={`form ${isLogin ? "hide" : ""}`}>
-            <h1>{otpVerified ? "Create Password" : "Create Account"}</h1>
+            <h1>
+              {regStep === 1 ? "Create Account" : regStep === 2 ? "Verify Email" : "Final Details"}
+            </h1>
 
             <p className="subtitle">
-              {otpVerified
-                ? "Set password to finish registration"
-                : "Verify email with OTP"}
+              {regStep === 1 
+                ? "Join the TalkShow family" 
+                : regStep === 2 
+                  ? "Enter OTP to continue" 
+                  : "Finish setting up your profile"}
             </p>
 
             <form onSubmit={register}>
-              {!otpVerified && (
-                <>
+              {regStep === 1 && (
+                <div className="step-1 animate-in">
                   <div className="row">
                     <input
                       type="text"
                       name="full_name"
                       placeholder="Full Name"
                       onChange={change}
+                      value={form.full_name}
                       required
                     />
-
-                    <input
-                      type="tel"
-                      name="phone_number"
-                      placeholder="Phone Number"
-                      onChange={change}
-                    />
                   </div>
-
+                  <div className="row">
+                    <select 
+                      name="gender" 
+                      onChange={change} 
+                      value={form.gender} 
+                      className="auth-select gender-select"
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
                   <input
                     type="email"
                     name="email"
                     placeholder="Email Address"
                     onChange={change}
-                    disabled={otpSent}
+                    value={form.email}
                     required
                   />
-
-                  {!otpSent && (
-                    <button type="button" className="otpBtn" onClick={sendOtp}>
-                      Send OTP
-                    </button>
-                  )}
-
-                  {otpSent && (
-                    <div className="otpSection">
-                      <div className="otpBoxes">
-                        {otp.map((v, i) => (
-                          <input
-                            key={i}
-                            maxLength="1"
-                            value={v}
-                            onChange={(e) => changeOtp(e.target.value, i)}
-                          />
-                        ))}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="main-btn"
-                        onClick={verifyOtp}
-                      >
-                        Verify OTP
-                      </button>
-
-                      <div className="timer-section">
-                        {timer > 0 ? (
-                          <span>Resend OTP in {timer}s</span>
-                        ) : (
-                          <span className="resend" onClick={sendOtp}>
-                            Resend Code
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </>
+                  <button type="button" className="main-btn" onClick={sendOtp}>
+                    Send OTP
+                  </button>
+                </div>
               )}
 
-              {otpVerified && (
-                <div className="step-2">
+              {regStep === 2 && (
+                <div className="step-2 animate-in">
+                  <p className="subtitle">Enter the 6-digit code sent to {form.email}</p>
+                  <div className="otpSection">
+                    <div className="otpBoxes">
+                      {otp.map((v, i) => (
+                        <input
+                          key={i}
+                          maxLength="1"
+                          value={v}
+                          onChange={(e) => changeOtp(e.target.value, i)}
+                          onKeyDown={(e) => handleOtpKeyDown(e, i)}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="main-btn"
+                      onClick={verifyOtp}
+                    >
+                      Verify OTP
+                    </button>
+
+                    <div className="timer-section">
+                      {timer > 0 ? (
+                        <span>Resend OTP in {timer}s</span>
+                      ) : (
+                        <span className="resend" onClick={sendOtp}>
+                          Resend Code
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button type="button" className="forgot back-btn" onClick={() => setRegStep(1)}>
+                    Back to Edit Info
+                  </button>
+                </div>
+              )}
+
+              {regStep === 3 && (
+                <div className="step-3 animate-in">
+                  <div className="row">
+                    <input
+                      type="text"
+                      name="username"
+                      placeholder="Username"
+                      onChange={change}
+                      value={form.username}
+                      required
+                    />
+                    <select 
+                      name="role" 
+                      onChange={change} 
+                      value={form.role} 
+                      className="auth-select role-select"
+                    >
+                      <option value="">Talent/Role (Optional)</option>
+                      {roles.map(r => (
+                        <option key={r.id} value={r.id}>{r.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <input
+                    type="text"
+                    name="bio"
+                    placeholder="Short Bio"
+                    onChange={change}
+                    value={form.bio}
+                  />
+
                   <div className="row">
                     <input
                       type="password"
@@ -322,7 +396,6 @@ function LoginRegister() {
                       onChange={change}
                       required
                     />
-
                     <input
                       type="password"
                       name="confirm_password"
@@ -334,7 +407,6 @@ function LoginRegister() {
 
                   <div className="file-input-wrapper">
                     <label>Profile Picture</label>
-
                     <input type="file" name="profile" onChange={change} />
                   </div>
 

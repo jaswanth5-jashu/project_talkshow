@@ -13,6 +13,7 @@ function Feedback_main() {
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showGuard, setShowGuard] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -53,6 +54,8 @@ function Feedback_main() {
       if (!res.error) {
         setFeedback("");
         fetchFeedbacks();
+        setSubmitSuccess(true);
+        setTimeout(() => setSubmitSuccess(false), 5000); // Hide after 5 seconds
       }
     } catch (err) {
       console.error("Failed to submit feedback", err);
@@ -105,6 +108,11 @@ function Feedback_main() {
             <button type="submit" disabled={loading}>
               {loading ? "Submitting..." : "Send Feedback"}
             </button>
+            {submitSuccess && (
+              <p className="feedback-success-msg">
+                Feedback submitted! An admin needs to approve it before it is visible.
+              </p>
+            )}
           </form>
         </div>
 

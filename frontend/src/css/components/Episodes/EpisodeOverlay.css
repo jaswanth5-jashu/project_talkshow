@@ -254,17 +254,53 @@
 
 /* Mobile Responsive Media Query */
 @media (max-width: 768px) {
-
+    .main-stage {
+        padding: 20px;
+        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+    }
+    .close-overlay-cinematic {
+        top: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+    .meta-title {
+        font-size: 1.8rem;
+    }
+    .meta-glass-card {
+        padding: 30px 20px;
+    }
+    .meta-details {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .cinematic-watch-btn {
+        padding: 16px;
+        font-size: 0.8rem;
+    }
 }
 
 
 /* Tablet Responsive Media Query */
 @media (max-width: 1024px) {
-
+    .main-stage {
+        padding: 30px;
+    }
+    .meta-title {
+        font-size: 2.2rem;
+    }
 }
 
 
 /* Mobile Small Responsive Media Query */
 @media (max-width: 480px) {
-
+    .meta-title {
+        font-size: 1.5rem;
+    }
+    .meta-desc {
+        font-size: 0.9rem;
+    }
 }

@@ -41,7 +41,170 @@
   font-size: 1.1rem;
 }
 
-/* Cinematic Red Mist */
+/* 🔍 Navigation & Search Bar - Redesigned */
+.profile-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 100;
+  gap: 30px;
+}
+
+.profile-search-container {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+}
+
+.profile-search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid #eaeaea;
+  padding: 12px 25px;
+  gap: 15px;
+  border-radius: 60px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.profile-search-bar:focus-within {
+  border-color: #ff0000;
+  background: #ffffff;
+  box-shadow: 0 15px 40px rgba(255, 0, 0, 0.1);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.profile-search-bar .search_icon {
+  color: #ff0000;
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+}
+
+.profile-search-bar:focus-within .search_icon {
+  transform: scale(1.2);
+}
+
+.profile-search-bar input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  outline: none;
+}
+
+/* Results Dropdown */
+.profile-search-results {
+  position: absolute;
+  top: calc(100% + 20px);
+  right: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+  border: 1px solid #f0f0f0;
+  max-height: 500px;
+  overflow-y: auto;
+  z-index: 10001; /* Fixed: Stay above all content */
+  animation: guestSlideIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes guestSlideIn {
+  from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.guest-result-item {
+  display: flex;
+  gap: 20px;
+  padding: 20px 25px;
+  text-decoration: none;
+  border-bottom: 1px solid #f8f8f8;
+  transition: all 0.3s ease;
+}
+
+.guest-result-item:hover {
+  background: #fff9f9;
+  padding-left: 35px;
+}
+
+.guest-result-item .result-avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid #eee;
+}
+
+.guest-result-item .result-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.guest-result-item .result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.guest-result-item .result-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guest-result-item .result-name {
+  font-weight: 700;
+  color: #111;
+  font-size: 1.05rem;
+}
+
+.guest-result-item .result-id {
+  font-size: 0.65rem;
+  background: #ff0000;
+  color: #fff;
+  padding: 2px 8px;
+  font-weight: 900;
+  border-radius: 4px;
+}
+
+.guest-result-item .result-designation {
+  font-size: 0.8rem;
+  color: #ff0000;
+  font-weight: 600;
+}
+
+.guest-result-item .result-bio-preview {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.profile-search-container .search-loader {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #ff0000;
+  border-radius: 50%;
+  animation: spinGuest 0.8s linear infinite;
+}
+
+@keyframes spinGuest {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
 .profile-page::before {
   content: "";
   position: absolute;
@@ -72,7 +235,7 @@
   z-index: 10;
 }
 
-/* LEFT SIDE - STICKY PORTRAIT */
+
 .profile-left {
   position: sticky;
   top: 120px;
@@ -102,7 +265,7 @@
   box-shadow: 0 10px 20px rgba(255, 0, 0, 0.2);
 }
 
-/* RIGHT SIDE - STAGGERED EDITORIAL */
+
 .profile-right {
   display: flex;
   flex-direction: column;
@@ -151,7 +314,7 @@
   letter-spacing: 2px;
 }
 
-/* Staggered Content Blocks */
+
 .guest-meta-grid, .guest-bio-section, .server-check-dashboard {
   background: #ffffff;
   padding: 40px;
@@ -214,7 +377,7 @@
   color: #000;
 }
 
-/* VIDEO SECTION - TALENT STYLE GRID */
+
 .guest-video {
   max-width: 1300px;
   margin: 0 auto;
@@ -348,15 +511,4 @@
   .profile-page { padding: 60px 5% 40px; }
   .profile-right h1 { font-size: 3.5rem; }
   .video-grid { grid-template-columns: 1fr; }
-}
-
-/* Tablet Responsive Media Query */
-@media (max-width: 1024px) {
-
-}
-
-
-/* Mobile Small Responsive Media Query */
-@media (max-width: 480px) {
-
 }

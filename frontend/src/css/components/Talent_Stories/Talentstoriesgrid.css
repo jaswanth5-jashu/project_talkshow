@@ -1,5 +1,5 @@
 .talentstories_grid{
-  padding:80px 2%;
+  padding: 20px 2% 80px; 
   display:grid;
   grid-template-columns:repeat(5, 1fr);
   gap:30px;
@@ -12,6 +12,7 @@
     linear-gradient(to right, rgba(0,0,0,0.015) 1px, transparent 1px);
   background-size: 40px 40px, 100% 100%, 120px 120px;
   position: relative;
+  z-index: 1; 
 }
 
 .talentstories_grid::before {
@@ -29,6 +30,13 @@ border-radius:18px;
 background: #fff;
 box-shadow: 0 10px 30px rgba(0,0,0,0.04);
 position: relative;
+animation: talentFadeIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) both;
+animation-delay: calc(var(--index) * 0.1s);
+}
+
+@keyframes talentFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .talent_card:hover{
@@ -144,6 +152,12 @@ color: #fff;
 opacity: 1;
 }
 
+@media (max-width: 1200px) {
+  .talentstories_grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   .talentstories_grid {
     padding: 60px 5%;
@@ -152,14 +166,20 @@ opacity: 1;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .talentstories_grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
   .talentstories_grid {
     padding: 40px 4%;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   .talent_image {
-    height: 220px;
+    height: 300px;
     border-radius: 12px;
   }
   .talent_card {
@@ -169,35 +189,18 @@ opacity: 1;
     padding: 20px 12px 12px;
   }
   .talent_overlay h3 {
-    font-size: 14px;
+    font-size: 18px;
     margin-bottom: 4px;
   }
   .talent_desc {
     display: none;
   }
   .talent_category {
-    font-size: 9px;
-    padding: 4px 8px;
+    font-size: 10px;
+    padding: 4px 10px;
     margin-bottom: 6px;
   }
   .talent_location {
-    font-size: 11px;
+    font-size: 12px;
   }
-}
-
-/* Mobile Responsive Media Query */
-@media (max-width: 768px) {
-
-}
-
-
-/* Tablet Responsive Media Query */
-@media (max-width: 1024px) {
-
-}
-
-
-/* Mobile Small Responsive Media Query */
-@media (max-width: 480px) {
-
 }

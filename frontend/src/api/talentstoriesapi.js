@@ -16,4 +16,68 @@ export function submitTalent(formData) {
   }).then((res) => res.data);
 }
 
+export function toggleLike(id) {
+  return apiClient.post(`/talent/${id}/like/`).then(res => res.data);
+}
+
+export function getComments(id) {
+  return apiClient.get(`/talent/${id}/comments/`).then(res => res.data);
+}
+
+export function postComment(id, text) {
+  return apiClient.post(`/talent/${id}/comments/`, { text }).then(res => res.data);
+}
+
+export function toggleSubscribe(userId) {
+  return apiClient.post(`/subscribe/${userId}/`).then(res => res.data);
+}
+
+export function getUserVideos() {
+  return apiClient.get('/my-videos/').then(res => res.data);
+}
+
+export function getMySubmissions() {
+  return apiClient.get('/my-submissions/').then(res => res.data);
+}
+
+export function dismissSubmission(id) {
+  return apiClient.post(`/dismiss-submission/${id}/`).then(res => res.data);
+}
+
+export function deleteTalent(id) {
+  return apiClient.delete(`/talent/${id}/`).then(res => res.data);
+}
+
+export function deleteSubmission(id) {
+  return apiClient.delete(`/delete-submission/${id}/`).then(res => res.data);
+}
+
+export function deleteComment(id) {
+  return apiClient.delete(`/delete-comment/${id}/`).then(res => res.data);
+}
+
+export function getNotifications() {
+  return apiClient.get('/notifications/').then(res => res.data);
+}
+
+export function markNotificationRead(id) {
+  return apiClient.post(`/notifications/${id}/read/`).then(res => res.data);
+}
+
+export const searchUsers = (query) => {
+    return apiClient.get(`/search-users/?q=${query}`).then(res => res.data);
+};
+
+export const searchEpisodes = (query) => {
+    return apiClient.get(`/search-episodes/?q=${query}`).then(res => res.data);
+};
+
+export const searchGuests = (query) => {
+    return apiClient.get(`/search-guests/?q=${query}`).then(res => res.data);
+};
+
+export const searchTalents = (query) => {
+    return apiClient.get(`/search-talents/?q=${query}`).then(res => res.data);
+};
+
 export default getTalentStories;

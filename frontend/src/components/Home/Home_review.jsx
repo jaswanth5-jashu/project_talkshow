@@ -6,7 +6,7 @@ function Home_review() {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    getFeedbacks().then(data => setFeedbacks(data.slice(0, 3)));
+    getFeedbacks().then(data => setFeedbacks(data));
   }, []);
 
   return (
@@ -31,7 +31,7 @@ function Home_review() {
           </div>
         ))}
         {feedbacks.length === 0 && (
-          <p style={{ textAlign: 'center', opacity: 0.5 }}>No feedback yet. Be the first!</p>
+          <p className="empty-feedback-msg">No feedback yet. Be the first!</p>
         )}
       </div>
     </section>

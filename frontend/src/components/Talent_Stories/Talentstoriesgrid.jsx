@@ -8,35 +8,29 @@ import { useAuth } from "../../context/AuthContext";
 import AuthGuard from "../Common/AuthGuard";
 
 function Talentstoriesgrid({ search = "" }) {
-
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [talents, setTalents] = useState([]);
   const [showGuard, setShowGuard] = useState(false);
 
   useEffect(function () {
-
-    getTalentStories().then(function (data) {
-
-      setTalents(data);
-
-    });
-
+    getTalentStories()
+      .then(function (data) {
+        setTalents(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching talents:", err);
+      });
   }, []);
 
   const term = search.toLowerCase();
 
   const filtered = talents.filter(function (talent) {
-
-    const text = [
-      talent.name,
-      talent.talent,
-      talent.state,
-      talent.country
-    ].join(" ").toLowerCase();
+    const text = [talent.name, talent.talent, talent.state, talent.country]
+      .join(" ")
+      .toLowerCase();
 
     return text.includes(term);
-
   });
 
   function handleCardClick(id) {
@@ -47,41 +41,32 @@ function Talentstoriesgrid({ search = "" }) {
     navigate("/talent/" + id);
   }
 
-
   return (
     <div className="talentstories_grid">
-
       {filtered.map(function (talent, index) {
-
-        const imageUrl = (talent.thumbnail && talent.thumbnail.startsWith("http"))
-          ? talent.thumbnail 
-          : (talent.thumbnail ? `${getMediaBase()}${talent.thumbnail}` : "");
+        const imageUrl =
+          talent.thumbnail && talent.thumbnail.startsWith("http")
+            ? talent.thumbnail
+            : talent.thumbnail
+              ? `${getMediaBase()}${talent.thumbnail}`
+              : "";
 
         return (
-
           <div
             key={talent.id}
             className="talent_card"
             onClick={() => handleCardClick(talent.id)}
-            style={{ animationDelay: `${index * 0.1}s` }}
+            style={{ "--index": index }}
           >
-
             <div className="talent_image">
-
-              <img
-                src={imageUrl}
-                alt={talent.name}
-              />
+              <img src={imageUrl} alt={talent.name} />
 
               <div className="talent_overlay">
-
                 <div className="play_icon_center">
                   <FiPlay />
                 </div>
 
-                <span className="talent_category">
-                  {talent.talent}
-                </span>
+                <span className="talent_category">{talent.talent}</span>
 
                 <h3>{talent.name}</h3>
 
@@ -89,28 +74,32 @@ function Talentstoriesgrid({ search = "" }) {
                   <FiMapPin /> {talent.state}, {talent.country}
                 </div>
 
-                <p className="talent_desc">
-                  {talent.desc_of_talent}
-                </p>
-                
+                <p className="talent_desc">{talent.desc_of_talent}</p>
               </div>
-
             </div>
-
           </div>
-
         );
-
       })}
 
+      {filtered.length === 0 && (
+        <div className="no_talents_message">
+          <FiPlay />
+          <h3>No Talent Stories Yet</h3>
+          <p>
+            The stage is waiting! Be the first to share your talent with the
+            world.
+          </p>
+        </div>
+      )}
+
       {showGuard && (
-        <AuthGuard 
-          onClose={() => setShowGuard(false)} 
-          message="Unlock these incredible talent stories! Please login or register to watch full talent profiles." 
+        <AuthGuard
+          onClose={() => setShowGuard(false)}
+          message="Unlock these incredible talent stories! Please login or register to watch full talent profiles."
         />
       )}
     </div>
   );
 }
 
-export default Talentstoriesgrid;
+export default Talentstoriesgrid;

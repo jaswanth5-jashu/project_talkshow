@@ -26,7 +26,8 @@ function Showyourtalent() {
         ...prev,
         name: user.full_name || user.username || "",
         email: user.email,
-        phone_number: user.phone_number || ""
+        phone_number: user.phone_number || "",
+        talent: user.role || prev.talent
       }));
     }
   }, [user]);
@@ -93,7 +94,7 @@ function Showyourtalent() {
                 onClose={() => window.history.back()} 
                 message="The stage is set for members! Please login or register to share your talent application and join the TalkShow family." 
             />
-            <div style={{ filter: 'blur(20px)', pointerEvents: 'none' }}>
+            <div className="blurred-content">
                 <div className="talent-hero">
                     <h1>UNLEASH YOUR <span>STORY</span></h1>
                 </div>
@@ -145,7 +146,17 @@ function Showyourtalent() {
               </div>
               <div className="input-group">
                 <label><FiStar /> Talent Category</label>
-                <input type="text" name="talent" value={form.talent} onChange={handleChange} placeholder="Singer, Dancer, Actor, etc." required />
+                <input 
+                  type="text" 
+                  name="talent" 
+                  value={form.talent} 
+                  onChange={handleChange} 
+                  placeholder="Singer, Dancer, Actor, etc." 
+                  required 
+                  readOnly={!!user?.role}
+                  className={user?.role ? "locked-input" : ""}
+                />
+                {user?.role && <small className="input-help-text">Locked to your registered talent category</small>}
               </div>
             </div>
 

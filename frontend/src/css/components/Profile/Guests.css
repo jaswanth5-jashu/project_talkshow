@@ -1,5 +1,5 @@
 .guests-page {
-  padding: 40px 0 100px;
+  padding: 10px 0 100px; /* Reduced top padding */
   background-color: #ffffff;
   background-image: 
     radial-gradient(rgba(255, 0, 0, 0.05) 2px, transparent 2px),
@@ -8,7 +8,8 @@
   background-size: 30px 30px, 80px 80px, 80px 80px;
   min-height: 100vh;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Fixed: Allow search results from header to show */
+  z-index: 1; /* Fixed: Stay below the header */
 }
 
 .guests-page::after {
@@ -31,25 +32,12 @@
 
 .guests-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 4%;
-}
-
-@media (max-width: 1100px) {
-  .guests-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .guests-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 0 15px;
-  }
+  justify-items: center;
 }
 
 .loading-container,
@@ -60,22 +48,4 @@
   font-size: 1.1rem;
   font-weight: 500;
   width: 100%;
-}
-
-
-/* Mobile Responsive Media Query */
-@media (max-width: 768px) {
-
-}
-
-
-/* Tablet Responsive Media Query */
-@media (max-width: 1024px) {
-
-}
-
-
-/* Mobile Small Responsive Media Query */
-@media (max-width: 480px) {
-
 }

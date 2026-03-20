@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiUserPlus } from "react-icons/fi";
 import GuestCard from "../../components/Profile/GuestCard";
 import GuestsHeader from "./GuestsHeader";
 import { getGuests } from "../../api/guestapi";
@@ -31,7 +32,7 @@ function Guests() {
 
   return (
     <div className="guests-page">
-      <GuestsHeader search={search} setSearch={setSearch} />
+      <GuestsHeader search={search} setSearch={setSearch} guests={guests} />
       
       {loading ? (
         <div className="loading-container">
@@ -52,7 +53,15 @@ function Guests() {
           ))}
           {filteredGuests.length === 0 && (
             <div className="no-results">
-              <p>No guests found matching "{search}"</p>
+              <FiUserPlus />
+              <h3>
+                {search ? 'No Matches Found' : 'No Guest Profiles Available'}
+              </h3>
+              <p>
+                {search 
+                  ? `We couldn't find any guests matching "${search}". Please try a different term.` 
+                  : 'We are currently preparing more incredible guest stories. Stay tuned!'}
+              </p>
             </div>
           )}
         </div>

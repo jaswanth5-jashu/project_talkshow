@@ -23,7 +23,7 @@ function Footer() {
 
             <NavLink to="/">Home</NavLink>
             <NavLink to="/Talentstories">Talent Stories</NavLink>
-            <NavLink to="/GuestProfile">Guest Profile</NavLink>
+            <NavLink to="/guests">Guest Profile</NavLink>
             <NavLink to="/Episodes">Episodes</NavLink>
             <NavLink to="/Feedback">Feedback</NavLink>
         </div>

@@ -1,8 +1,8 @@
 .episodes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 40px;
-    padding: 60px 5% 100px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+    padding: 20px 4% 100px; 
     max-width: 1400px;
     margin: 0 auto;
     background: #ffffff;
@@ -12,6 +12,7 @@
         linear-gradient(to bottom, rgba(0,0,0,0.01) 1px, transparent 1px);
     background-size: 30px 30px, 100px 100px, 100px 100px;
     position: relative;
+    z-index: 1; 
 }
 
 .episode-card {
@@ -23,6 +24,7 @@
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     opacity: 0;
     border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
 }
 
 .episode-card:hover {
@@ -66,7 +68,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 30px;
+    padding: 20px;
     transition: all 0.5s ease;
 }
 
@@ -101,7 +103,7 @@
 
 .episode-name {
     color: #ffffff;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: 900;
     letter-spacing: -1px;
     line-height: 1.1;
@@ -144,7 +146,7 @@
     transform: scale(1) rotate(0deg);
 }
 
-/* Internal Glowing Frame */
+
 .episode-card::before {
     content: "";
     position: absolute;
@@ -167,9 +169,10 @@
     bottom: 10px;
 }
 
-/* Entrance Animation */
+
 .animate-card-in {
     animation: posterIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(var(--index) * 0.16s);
 }
 
 @keyframes posterIn {
@@ -183,6 +186,12 @@
     }
 }
 
+@media (max-width: 900px) {
+    .episodes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .episodes-grid {
         grid-template-columns: 1fr;
@@ -193,13 +202,25 @@
     }
 }
 
-/* Tablet Responsive Media Query */
-@media (max-width: 1024px) {
 
+@media (max-width: 1024px) {
+    .episodes-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
 }
 
 
-/* Mobile Small Responsive Media Query */
-@media (max-width: 480px) {
 
+@media (max-width: 480px) {
+    .episodes-grid {
+        grid-template-columns: 1fr;
+        padding: 30px 4%;
+    }
+    .episode-card {
+        aspect-ratio: 1;
+    }
+    .episode-name {
+        font-size: 1.2rem;
+    }
 }

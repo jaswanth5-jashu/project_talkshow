@@ -8,6 +8,10 @@ function loginUser(email, password) {
     .then((res) => res.data);
 }
 
+function getRoles() {
+  return apiClient.get("/roles/").then(res => res.data);
+}
+
 function sendOtpAPI(email) {
   return apiClient.post("/register/", {
     email: email
@@ -33,6 +37,9 @@ function registerUser(form) {
   if (form.profile) {
     fd.append("profile", form.profile);
   }
+  if (form.role) {
+    fd.append("role", form.role);
+  }
   return apiClient.post("/register/", fd)
     .then((res) => res.data);
 }
@@ -46,5 +53,6 @@ export {
   sendOtpAPI,
   verifyOtpAPI,
   registerUser,
-  googleLogin
+  googleLogin,
+  getRoles
 };

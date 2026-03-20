@@ -17,14 +17,20 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = (userData) => {
-        const { access, refresh, username, email, full_name, profile } = userData;
-        const userInfo = { username, email, full_name, profile };
+        const { access, refresh, id, username, email, full_name, profile, role } = userData;
+        const userInfo = { id, username, email, full_name, profile, role };
         
         localStorage.setItem("talkshow_user", JSON.stringify(userInfo));
         localStorage.setItem("talkshow_access", access);
         localStorage.setItem("talkshow_refresh", refresh);
         
         setUser(userInfo);
+    };
+
+    const updateUser = (updates) => {
+        const newUser = { ...user, ...updates };
+        localStorage.setItem("talkshow_user", JSON.stringify(newUser));
+        setUser(newUser);
     };
 
     const logout = () => {
@@ -37,7 +43,7 @@ export function AuthProvider({ children }) {
     const isAuthenticated = !!user;
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, updateUser, isAuthenticated, loading }}>
             {children}
         </AuthContext.Provider>
     );

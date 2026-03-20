@@ -1,9 +1,5 @@
 import { apiClient } from "./api";
 
-/**
- * Updates the user's profile information (profile picture, email, password)
- * @param {FormData} formData 
- */
 export function updateProfileAPI(formData) {
   return apiClient.post("/update-profile/", formData)
     .then(function (res) {
@@ -11,9 +7,19 @@ export function updateProfileAPI(formData) {
     });
 }
 
-export function getProfileAPI(email) {
-  return apiClient.post("/get-profile/", { email })
+export function getProfileAPI() {
+  return apiClient.post("/get-profile/")
     .then(function (res) {
       return res.data;
     });
+}
+
+export function getFollowers(userId) {
+  return apiClient.get(`/user/${userId}/followers/`)
+    .then(res => res.data);
+}
+
+export function getFollowing(userId) {
+  return apiClient.get(`/user/${userId}/following/`)
+    .then(res => res.data);
 }
