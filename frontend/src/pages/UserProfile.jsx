@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { FiUser, FiPlay, FiHeart, FiMessageSquare, FiMapPin, FiCalendar, FiUserPlus, FiCheck } from "react-icons/fi";
 import { apiClient, getMediaBase } from "../api/api";
-import { toggleSubscribe } from "../api/talentstoriesapi";
+import { toggleSubscribe, markNotificationRead } from "../api/talentstoriesapi";
 import { useAuth } from "../context/AuthContext";
 import FollowListModal from "../components/Profile/FollowListModal";
 import "../css/components/Profile/Profile.css";
 
 function UserProfile() {
     const { userId } = useParams();
+    const location = useLocation();
     const { user: currentUser } = useAuth();
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -16,6 +17,12 @@ function UserProfile() {
     const [followersCount, setFollowersCount] = useState(0);
     const [showFollowModal, setShowFollowModal] = useState(null); 
 
+    useEffect(() => {
+        // Auto-mark notification as read if we came from one
+        if (location.state?.notifId) {
+            markNotificationRead(location.state.notifId).catch(console.error);
+        }
+    }, [location.state, userId]);
     useEffect(() => {
         setLoading(true);
         apiClient.get(`/user/${userId}/`)
@@ -65,11 +72,14 @@ function UserProfile() {
 
                         <div className="hero-info-cinematic">
                             <div className="hero-badge-row">
-                                <span className="identity-badge">{profileData.role || "MEMBER"}</span>
+                                <span className="identity-badge premium-guest-badge">GUEST PROFILE</span>
+                                <span className="verified-status-tag">
+                                    <span className="v-dot"></span> VERIFIED
+                                </span>
                             </div>
 
                             <div className="hero-name-row-premium">
-                                <h1 className="hero-name-primary">{profileData.full_name || "MEMBER"}</h1>
+                                <h1 className="hero-name-primary profile-title-large">{profileData.full_name || "MEMBER"}</h1>
                                 
                                 {currentUser && currentUser.id !== parseInt(userId) && (
                                     <button 
@@ -130,7 +140,10 @@ function UserProfile() {
                                     </div>
                                     <div className="video-card-body">
                                         <h4>{video.name}</h4>
-                                        <p className="talent-tag">{video.talent}</p>
+                                        <div className="video-meta-info">
+                                            <p className="talent-tag">{video.talent}</p>
+                                            <p className="uploaded-by-tag">Uploaded by <span>{video.uploader_full_name || video.uploader_username}</span></p>
+                                        </div>
                                         <div className="video-card-footer">
                                             <div className="video-stats-row">
                                                 <span><FiHeart className="icon-heart" /> {video.likes_count}</span>

@@ -110,6 +110,12 @@
   outline: none;
 }
 
+.episodes_search input::placeholder {
+  color: #888;
+  font-weight: 400;
+  opacity: 1; /* Firefox */
+}
+
 /* Results Dropdown */
 .episodes-search-results {
   position: absolute;

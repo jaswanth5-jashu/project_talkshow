@@ -17,5 +17,12 @@ class CustomJWTAuthentication(JWTAuthentication):
         
         if not getattr(user, 'is_verified', True):
             raise AuthenticationFailed("User account is not verified", code="user_inactive")
+        
+        # If account is deactivated (soft deleted), we only allow login to reactivate.
+        # Other authenticated requests should fail.
+        # But wait, the LoginView returns a token. If they have a token, they are "logged in".
+        # So we should only block if is_active is False.
+        if not user.is_active:
+            raise AuthenticationFailed("Account is deactivated. Please login to reactivate.", code="user_deactivated")
 
         return user

@@ -48,6 +48,16 @@ function Footer() {
         </div>
 
         <div className="footer-social">
+          <h3>SUPPORT</h3>
+          <div className="footer-support-links">
+            <NavLink to="/Feedback">Help Center</NavLink>
+            <button className="footer-assist-trigger" onClick={() => window.dispatchEvent(new CustomEvent('open-assistant'))}>
+              AI Assistant
+            </button>
+          </div>
+        </div>
+
+        <div className="footer-social">
           <h3>CONNECT</h3>
 
           <div className="social-icons">

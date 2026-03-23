@@ -10,7 +10,8 @@ from .views import (
     ToggleSubscriptionView, UserTalentVideosView, MySubmissionsView, DismissSubmissionView,
     DeleteTalentSubmissionView, DeleteCommentView, NotificationListView, MarkNotificationReadView, UserPublicProfileView,
     UserSearchView, EpisodeSearchView, GuestSearchView, TalentSearchView,
-    FollowersListView, FollowingListView
+    FollowersListView, FollowingListView,
+    RequestAccountDeletionView, ConfirmAccountDeletionView, GoogleLogin
 )
 
 urlpatterns = [
@@ -50,4 +51,7 @@ urlpatterns = [
     path('search-talents/', TalentSearchView.as_view(), name='search-talents'),
     path('user/<int:pk>/followers/', FollowersListView.as_view(), name='user-followers'),
     path('user/<int:pk>/following/', FollowingListView.as_view(), name='user-following'),
+    path('request-account-deletion/', RequestAccountDeletionView.as_view(), name='request-deletion'),
+    path('confirm-account-deletion/', ConfirmAccountDeletionView.as_view(), name='confirm-deletion'),
+    path("google/login/", GoogleLogin.as_view(), name="google_login"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

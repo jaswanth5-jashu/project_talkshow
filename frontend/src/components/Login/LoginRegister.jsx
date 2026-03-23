@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
 import "../../css/components/Login/LoginRegister.css";
 
 import {
@@ -40,6 +41,13 @@ function LoginRegister() {
     role: "",
     gender: "",
     bio: "",
+  });
+
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    length: false,
+    capital: false,
+    number: false,
+    special: false,
   });
 
   const [roles, setRoles] = useState([]);
@@ -84,6 +92,15 @@ function LoginRegister() {
       const email = e.target.value;
       const username = form.username || email.split("@")[0] || "";
       setForm({ ...form, email, username });
+    } else if (e.target.name === "password") {
+       const pass = e.target.value;
+       setForm({ ...form, password: pass });
+       setPasswordCriteria({
+         length: pass.length >= 6,
+         capital: /[A-Z]/.test(pass),
+         number: /[0-9]/.test(pass),
+         special: /[!@#$%^&*(),.?":{}|<>]/.test(pass),
+       });
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
     }
@@ -148,6 +165,12 @@ function LoginRegister() {
       return;
     }
 
+    if (!Object.values(passwordCriteria).every(Boolean)) {
+      setMessage("Password must meet all security requirements");
+      setMsgType("error");
+      return;
+    }
+
     if (form.password !== form.confirm_password) {
       setMessage("Passwords not matching");
       setMsgType("error");
@@ -205,6 +228,31 @@ function LoginRegister() {
       }
     });
   }
+ 
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const data = await googleLogin(tokenResponse.access_token);
+        if (data.message) {
+          setMessage("Google login successful");
+          setMsgType("success");
+          contextLogin(data);
+          setTimeout(() => navigate("/"), 1500);
+        } else {
+          setMessage(data.error || "Google login failed");
+          setMsgType("error");
+        }
+      } catch (err) {
+        console.error("Google login error:", err);
+        setMessage("Connection failed. Check backend.");
+        setMsgType("error");
+      }
+    },
+    onError: () => {
+      setMessage("Google login failed");
+      setMsgType("error");
+    }
+  });
 
   return (
     <div className="auth">
@@ -251,7 +299,7 @@ function LoginRegister() {
               <button
                 type="button"
                 className="google-btn"
-                onClick={googleLogin}
+                onClick={() => handleGoogleLogin()}
               >
                 <img
                   src="https://developers.google.com/identity/images/g-logo.png"
@@ -388,7 +436,7 @@ function LoginRegister() {
                     value={form.bio}
                   />
 
-                  <div className="row">
+                  <div className="row pass-row">
                     <input
                       type="password"
                       name="password"
@@ -403,6 +451,12 @@ function LoginRegister() {
                       onChange={change}
                       required
                     />
+                  </div>
+                  <div className="password-checklist">
+                      <p className={passwordCriteria.length ? "met" : "unmet"}>• 6+ Characters</p>
+                      <p className={passwordCriteria.capital ? "met" : "unmet"}>• 1 Capital Letter</p>
+                      <p className={passwordCriteria.number ? "met" : "unmet"}>• 1 Digit</p>
+                      <p className={passwordCriteria.special ? "met" : "unmet"}>• 1 Special Character</p>
                   </div>
 
                   <div className="file-input-wrapper">

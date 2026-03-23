@@ -12,6 +12,9 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
 
 from .models import Registration, Home, GuestProfile, Feedback, Contact, Episode, Talent, TalentSubmission, TalentRole, Subscription, VideoLike, VideoComment, Notification
 from .serializers import (
@@ -49,8 +52,8 @@ def send_cool_email(subject, title, message, to_email, attachment=None):
             except Exception:
                 pass
         msg.send()
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 class RegisterView(APIView):
     def post(self, request):
@@ -147,8 +150,17 @@ class LoginView(APIView):
         if not check_password(password, user.password):
             return Response({"error": "Wrong password"})
         
+        if not user.is_active:
+            if user.deletion_scheduled_at and timezone.now() < user.deletion_scheduled_at + timedelta(days=30):
+                user.is_active = True
+                user.deletion_scheduled_at = None
+                user.save()
+                send_cool_email("Account Reactivated - TalkShow", "Welcome Back!", f"Hello {user.username}, your account has been successfully reactivated and the deletion request is cancelled.", user.email)
+            else:
+                return Response({"error": "Account is deleted or permanently deactivated"})
+
         refresh = RefreshToken.for_user(user)
-        
+
         if user.email:
             send_cool_email(
                 "Login Alert - TalkShow", "Successful Login",
@@ -168,6 +180,11 @@ class LoginView(APIView):
             "role": user.role.name if user.role else None,
             "gender": user.gender
         })
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://localhost:3000"
+    client_class = OAuth2Client
 
 class ForgotPassword(APIView):
     def post(self, request):
@@ -214,9 +231,19 @@ class ProfileView(generics.ListCreateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [permissions.AllowAny]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
 class UpdateProfileView(generics.RetrieveUpdateDestroyAPIView):
     queryset = GuestProfile.objects.all()
     serializer_class = ProfileSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 class FeedbackView(generics.ListCreateAPIView):
     serializer_class = FeedbackSerializer
@@ -331,56 +358,103 @@ class ToggleLikeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        talent_video = get_object_or_404(Talent, pk=pk)
-        like, created = VideoLike.objects.get_or_create(user=request.user, talent_video=talent_video)
-        if not created:
-            like.delete()
-            return Response({"message": "Unliked", "liked": False, "count": talent_video.likes.count()})
+        is_episode = request.data.get('is_episode', False)
         
-        if talent_video.user and talent_video.user != request.user:
+        if is_episode:
+            episode = get_object_or_404(Episode, pk=pk)
+            like, created = VideoLike.objects.get_or_create(user=request.user, episode=episode)
+            if not created:
+                like.delete()
+                return Response({"message": "Unliked", "liked": False, "count": episode.likes.count()})
+            
+            # For episodes, notifications go to the admin if requested, but we still create a notification for the guest's user if it exists
+            recipient = episode.guest.user if episode.guest.user else None
             Notification.objects.create(
-                recipient=talent_video.user,
+                recipient=recipient, # Can be None if no user linked, but admin gets email
                 sender=request.user,
                 notification_type='like',
-                text=f"{request.user.username} liked your video: {talent_video.talent}",
-                talent_video=talent_video
+                text=f"{request.user.username} liked the episode: {episode.name}",
+                episode=episode
             )
-            if talent_video.user.email:
-                send_cool_email(
-                    "New Like! - TalkShow",
-                    "Your video got a like!",
-                    f"Hello {talent_video.user.username}, {request.user.username} liked your talent story '{talent_video.talent}'. Check it out!",
-                    talent_video.user.email
+            
+            # ALWAYS send guest episode likes to admin as per user request (REMOVED: User requested only comments/follows)
+            # admin_msg = f"User {request.user.username} liked the episode '{episode.name}' by guest {episode.guest.name}."
+            # send_cool_email("Guest Episode Like! - TalkShow", "Episode Interaction", admin_msg, settings.ADMIN_EMAIL)
+            
+            return Response({"message": "Liked", "liked": True, "count": episode.likes.count()})
+        else:
+            talent_video = get_object_or_404(Talent, pk=pk)
+            like, created = VideoLike.objects.get_or_create(user=request.user, talent_video=talent_video)
+            if not created:
+                like.delete()
+                return Response({"message": "Unliked", "liked": False, "count": talent_video.likes.count()})
+            
+            if talent_video.user and talent_video.user != request.user:
+                Notification.objects.create(
+                    recipient=talent_video.user,
+                    sender=request.user,
+                    notification_type='like',
+                    text=f"{request.user.username} liked your video: {talent_video.talent}",
+                    talent_video=talent_video
                 )
+                if talent_video.user.email:
+                    send_cool_email(
+                        "New Like! - TalkShow",
+                        "Your video got a like!",
+                        f"Hello {talent_video.user.username}, {request.user.username} liked your talent story '{talent_video.talent}'. Check it out!",
+                        talent_video.user.email
+                    )
 
-        return Response({"message": "Liked", "liked": True, "count": talent_video.likes.count()})
+            return Response({"message": "Liked", "liked": True, "count": talent_video.likes.count()})
 
 class CommentView(generics.ListCreateAPIView):
     serializer_class = VideoCommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
+        is_episode = self.request.query_params.get('is_episode') == 'true'
+        if is_episode:
+            return VideoComment.objects.filter(episode_id=self.kwargs['pk']).order_by('-created_at')
         return VideoComment.objects.filter(talent_video_id=self.kwargs['pk']).order_by('-created_at')
 
     def perform_create(self, serializer):
-        talent_video = get_object_or_404(Talent, pk=self.kwargs['pk'])
-        serializer.save(user=self.request.user, talent_video=talent_video)
+        is_episode = self.request.data.get('is_episode', False)
         
-        if talent_video.user and talent_video.user != self.request.user:
+        if is_episode:
+            episode = get_object_or_404(Episode, pk=self.kwargs['pk'])
+            serializer.save(user=self.request.user, episode=episode)
+            
+            recipient = episode.guest.user if episode.guest.user else None
             Notification.objects.create(
-                recipient=talent_video.user,
+                recipient=recipient,
                 sender=self.request.user,
                 notification_type='comment',
-                text=f"{self.request.user.username} commented: {serializer.validated_data['text'][:50]}...",
-                talent_video=talent_video
+                text=f"{self.request.user.username} commented on the episode '{episode.name}': {serializer.validated_data['text'][:30]}...",
+                episode=episode
             )
-            if talent_video.user.email:
-                send_cool_email(
-                    "New Comment! - TalkShow",
-                    "Someone commented on your video!",
-                    f"Hello {talent_video.user.username}, {self.request.user.username} commented on your video: '{serializer.validated_data['text']}'.",
-                    talent_video.user.email
+            
+            # ALWAYS send guest episode comments to admin
+            admin_msg = f"User {self.request.user.username} commented on episode '{episode.name}' by {episode.guest.name}:<br><br>{serializer.validated_data['text']}"
+            send_cool_email("New Guest Episode Comment! - TalkShow", "Episode Interaction", admin_msg, settings.ADMIN_EMAIL)
+        else:
+            talent_video = get_object_or_404(Talent, pk=self.kwargs['pk'])
+            serializer.save(user=self.request.user, talent_video=talent_video)
+            
+            if talent_video.user and talent_video.user != self.request.user:
+                Notification.objects.create(
+                    recipient=talent_video.user,
+                    sender=self.request.user,
+                    notification_type='comment',
+                    text=f"{self.request.user.username} commented on your video '{talent_video.talent}': {serializer.validated_data['text'][:30]}...",
+                    talent_video=talent_video
                 )
+                if talent_video.user.email:
+                    send_cool_email(
+                        "New Comment! - TalkShow",
+                        "Someone commented on your video!",
+                        f"Hello {talent_video.user.username}, {self.request.user.username} commented on your video: '{serializer.validated_data['text']}'.",
+                        talent_video.user.email
+                    )
 
 class DeleteCommentView(generics.DestroyAPIView):
     queryset = VideoComment.objects.all()
@@ -416,6 +490,12 @@ class ToggleSubscriptionView(APIView):
                 f"Hello {subscribed_to.username}, {request.user.username} is now following you on TalkShow.",
                 subscribed_to.email
             )
+        
+        # If the followed user is a guest, notify admin
+        guest_profile = GuestProfile.objects.filter(user=subscribed_to).first()
+        if guest_profile:
+            admin_msg = f"User {request.user.username} started following the guest legend: {guest_profile.name}."
+            send_cool_email("New Guest Follower - TalkShow", "Guest Interaction", admin_msg, settings.ADMIN_EMAIL)
 
         return Response({"message": "Subscribed", "subscribed": True})
 
@@ -424,7 +504,10 @@ class NotificationListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.filter(recipient=self.request.user)
+        # Auto-clear notifications older than 30 days
+        expiry_date = timezone.now() - timedelta(days=30)
+        Notification.objects.filter(recipient=self.request.user, created_at__lt=expiry_date).delete()
+        return Notification.objects.filter(recipient=self.request.user).order_by('-created_at')
 
 class MarkNotificationReadView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -600,10 +683,24 @@ class UserPublicProfileView(APIView):
         if request.user.is_authenticated:
             is_following = Subscription.objects.filter(subscriber=request.user, subscribed_to=user).exists()
         
+        def mask_email(email):
+            if not email: return ""
+            parts = email.split('@')
+            return f"{parts[0][:2]}***@{parts[1]}" if len(parts) == 2 else f"{email[:2]}***"
+
+        def mask_phone(phone):
+            if not phone: return ""
+            return "*" * (max(0, len(phone) - 4)) + phone[-4:]
+
+        is_admin = getattr(request.user, 'is_staff', False) or (getattr(request.user, 'role', None) and request.user.role.name == 'Admin')
+        is_owner = request.user.is_authenticated and (request.user == user or is_admin)
+        
         return Response({
             'id': user.id,
             'username': user.username,
             'full_name': user.full_name,
+            'email': user.email if is_owner else mask_email(user.email),
+            'phone': user.phone_number if is_owner else mask_phone(user.phone_number),
             'bio': user.bio,
             'profile': user.profile.url if user.profile else None,
             'role': user.role.name if user.role else None,
@@ -748,3 +845,55 @@ class TalentSearchView(APIView):
             })
         
         return Response(results)
+class RequestAccountDeletionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if not user.email:
+            return Response({"error": "Email is required to receive deletion verification code"}, status=400)
+        
+        otp = str(random.randint(100000, 999999))
+        user.otp = otp
+        user.save()
+        
+        send_cool_email(
+            "Account Deletion Request - TalkShow",
+            "Verify Your Deletion Request",
+            f"Hello {user.username}, we received a request to delete your account. Use the following code to verify and proceed: <h2 style='color:#ff0000; text-align:center;'>{otp}</h2> If you did not request this, please change your password immediately.",
+            user.email
+        )
+        return Response({"message": "Verification code sent to email"})
+
+class ConfirmAccountDeletionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        otp = request.data.get("otp")
+        
+        if not user.otp or user.otp != otp:
+            return Response({"error": "Invalid verification code"}, status=400)
+        
+        user.is_active = False
+        user.deletion_scheduled_at = timezone.now()
+        user.otp = ""
+        user.save()
+        
+        # Notify User
+        send_cool_email(
+            "Account Deactivated - TalkShow",
+            "Deletion Scheduled",
+            f"Hello {user.username}, your account has been deactivated and is scheduled for permanent deletion in 30 days. To cancel this, simply log in again within the next 30 days.",
+            user.email
+        )
+        
+        # Notify Admin
+        send_cool_email(
+            "User Account Deletion Alert",
+            "User Deletion Scheduled",
+            f"Administrator ALERT: User {user.username} (Email: {user.email}) has scheduled their account for deletion. Permanent deletion will occur in 30 days if not reactivated.",
+            settings.ADMIN_EMAIL
+        )
+        
+        return Response({"message": "Account deactivated and scheduled for deletion"})

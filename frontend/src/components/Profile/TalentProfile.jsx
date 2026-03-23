@@ -89,81 +89,98 @@ function TalentProfile() {
   };
 
   return (
-    <div className="talent-profile-page">
-      <button className="global-back-btn" onClick={() => navigate("/talentstories")}>
-        <FiArrowLeft /> Back to Stories
-      </button>
-      <div className="talent-profile-container">
-        <div className="talent-profile-left">
-          <img src={getFullUrl(talent.thumbnail)} alt={talent.name} />
+    <div className="talent-profile-page white-theme">
+      <div className="talent-profile-top-nav">
+        <button className="minimal-back-btn-light" onClick={() => navigate("/talentstories")}>
+          <FiArrowLeft /> <span>EXIT PROFILE</span>
+        </button>
+      </div>
+
+      <div className="talent-profile-hero-card">
+        <div className="talent-hero-image-showcase">
+          <div className="collage-base small-dp">
+            <img src={getFullUrl(talent.thumbnail)} alt={talent.name} className="main-talent-image" />
+            <div className="floating-card-mini img-1">
+               <img src={getFullUrl(talent.thumbnail)} alt="detail" />
+            </div>
+          </div>
         </div>
 
-        <div className="talent-profile-right">
-          <div className="talent-header-row">
-            <div>
-              <h4>{talent.talent}</h4>
-              <h1>{talent.name}</h1>
-            </div>
-            {(!user || user.id !== talent.user) && (
+        <div className="talent-hero-info">
+          <div className="talent-category-tag">{talent.talent}</div>
+          <h1 className="talent-name-primary">{talent.name}</h1>
+          
+          <div className="talent-hero-actions">
+            {(!user || parseInt(user.id) !== parseInt(talent.user)) ? (
               <button 
-                className={`follow-btn-premium ${isFollowing ? 'following' : 'not-following'}`} 
+                className={`follow-btn-classical-red ${isFollowing ? 'active' : ''}`} 
                 onClick={handleToggleFollow}
                 disabled={followLoading}
               >
-                {isFollowing ? <><FiCheck /> Following</> : <><FiUserPlus /> Follow</>}
+                {isFollowing ? <FiCheck /> : <FiUserPlus />}
+                <span>{isFollowing ? 'FOLLOWING' : 'FOLLOW'}</span>
+              </button>
+            ) : (
+              <button className="follow-btn-classical-outline" onClick={() => navigate('/profile')}>
+                <span>EDIT PROFILE</span>
               </button>
             )}
           </div>
-          
-          <div className="talent-stats-row">
-            <div className="stat-pill">
-              <span className="stat-value">{talent.followers_count || 0}</span>
-              <span className="stat-label">Followers</span>
+
+          <div className="talent-stats-classical">
+            <div className="stat-unit">
+              <span className="stat-num">{talent.followers_count || 0}</span>
+              <span className="stat-lab">FOLLOWERS</span>
             </div>
-            <div className="stat-pill">
-              <span className="stat-value">{talent.following_count || 0}</span>
-              <span className="stat-label">Following</span>
+            <div className="stat-unit">
+              <span className="stat-num">{talent.following_count || 0}</span>
+              <span className="stat-lab">FOLLOWING</span>
             </div>
-            <div className="stat-pill">
-              <span className="stat-value">{talent.uploaded_count || 0}</span>
-              <span className="stat-label">Uploaded</span>
+            <div className="stat-unit">
+              <span className="stat-num">{talent.uploaded_count || 0}</span>
+              <span className="stat-lab">UPLOADED</span>
             </div>
           </div>
 
-          <div className="talent-location">
-            <FiMapPin /> {talent.state}, {talent.country}
+          <div className="talent-meta-classical">
+            <div className="meta-item">
+              <FiMapPin /> <span>{talent.state}, {talent.country}</span>
+            </div>
           </div>
 
-          <div className="talent-quotation">
-            "{talent.quotation}"
+          <div className="talent-quote-classical">
+            <div className="quote-bar"></div>
+            <p>"{talent.quotation}"</p>
           </div>
 
           {talent.user_bio && (
-            <div className="talent-bio-short">
+            <div className="talent-journey-classical">
               <h3>Professional Bio</h3>
               <p>{talent.user_bio}</p>
             </div>
           )}
 
-          <div className="talent-story">
+          <div className="talent-journey-classical">
             <h3>About the Journey</h3>
             <p>{talent.story_about_person}</p>
-            <p>{talent.desc_of_talent}</p>
+            {talent.desc_of_talent && <p className="journey-extra">{talent.desc_of_talent}</p>}
           </div>
         </div>
       </div>
 
+      <div className="talent-content-divider"></div>
+
       <div className="talent-video-section">
         <h2>Watch the Performance</h2>
-        <div className="main-video-preview" onClick={() => handlePlayVideo(talent.id)}>
-          <div className="video-thumbnail-container">
-            <img 
-              src={getFullUrl(talent.thumbnail)} 
-              className="talent-main-video-poster" 
-              alt="Video Poster"
-            />
-            <div className="play-overlay">
-              <FiPlay className="play-btn-large" />
+        <div className="performance-grid-small">
+          <div className="mini-video-card" onClick={() => handlePlayVideo(talent.id)}>
+            <div className="mini-thumbnail-box">
+              <img src={getFullUrl(talent.thumbnail)} alt="Performance" />
+              <div className="mini-play-btn"><FiPlay /></div>
+            </div>
+            <div className="mini-video-info">
+              <h4>Official Performance</h4>
+              <span>{talent.talent}</span>
             </div>
           </div>
         </div>

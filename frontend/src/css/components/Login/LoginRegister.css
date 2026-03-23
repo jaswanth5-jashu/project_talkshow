@@ -112,9 +112,10 @@
 
 .form p.subtitle {
   font-size: 15px;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.85); /* Increased visibility */
   margin: 0 0 15px 0;
-  font-weight: 300;
+  font-weight: 400;
+  letter-spacing: 0.2px;
 }
 
 .form form {
@@ -296,8 +297,25 @@
 
 .forgot.back-btn {
   align-self: center;
-  margin-top: 20px;
+  margin-top: 25px;
   text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  padding: 10px 24px;
+  border-radius: 12px;
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  outline: none;
+}
+
+.forgot.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  color: #fff;
 }
 
 /* OTP Section */
@@ -325,25 +343,39 @@
   padding: 0;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.otpBoxes input:focus {
+  border-color: var(--primary-color);
+  background: rgba(255, 51, 102, 0.05);
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .timer-section {
   font-size: 14px;
-  color: var(--text-muted);
-  margin-top: 15px;
+  color: var(--text-main);
+  margin: 20px 0;
   text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .resend {
-  color: var(--secondary-color);
+  color: var(--primary-color);
   cursor: pointer;
   font-weight: 600;
+  text-decoration: underline;
   transition: all 0.2s ease;
+  margin-left: 5px;
 }
 
 .resend:hover {
   filter: brightness(1.2);
-  text-shadow: 0 0 10px rgba(255, 153, 51, 0.4);
+  text-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
 }
 
 /* File Input Wrapper */
@@ -486,4 +518,39 @@
     height: 50px;
     font-size: 20px;
   }
+
+  .password-checklist {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
+
+.password-checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+}
+
+.password-checklist p {
+  font-size: 12px;
+  margin: 0;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.password-checklist p.met {
+  color: #2ed573;
+  text-shadow: 0 0 10px rgba(46, 213, 115, 0.2);
+}
+
+.password-checklist p.unmet {
+  color: rgba(255, 255, 255, 0.2);
+}
+

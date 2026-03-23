@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { FiX, FiPlay } from "react-icons/fi";
 import { getEpisodes } from "../../api/guestapi";
@@ -74,7 +74,7 @@ function EpisodesGrid({ search, episodes }) {
         </div>
       ))}
 
-      {showOverlay && selectedEpisode && ReactDOM.createPortal(
+      {showOverlay && selectedEpisode && createPortal(
         <div className="episode-overlay" onClick={closeOverlay}>
           <div className="overlay-vignette"></div>
           

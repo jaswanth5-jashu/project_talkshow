@@ -8,7 +8,6 @@ import "../../css/components/Feedback/Feedback.css";
 function Feedback_main() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [feedback, setFeedback] = useState("");
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,7 +19,6 @@ function Feedback_main() {
     if (user) {
       setName(user.full_name || user.username || "");
       setEmail(user.email || "");
-      setPhone(user.phone_number || "");
     }
   }, [user]);
 
@@ -48,7 +46,6 @@ function Feedback_main() {
       const res = await submitFeedback({
         name,
         email,
-        phone_number: phone,
         feedback
       });
       if (!res.error) {
@@ -92,13 +89,6 @@ function Feedback_main() {
                 required
               />
             </div>
-            <input
-              type="text"
-              placeholder="Phone Number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
             <textarea
               placeholder="Your Message..."
               value={feedback}

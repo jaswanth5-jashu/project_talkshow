@@ -18,8 +18,10 @@ class Registration(models.Model):
     otp = models.CharField(max_length=6, null=True, blank=True)
     role = models.ForeignKey(TalentRole, on_delete=models.SET_NULL, null=True, blank=True)
     is_verified = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     temp_email = models.EmailField(null=True, blank=True)
     gender = models.CharField(max_length=10, null=True, blank=True)
+    deletion_scheduled_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -44,13 +46,14 @@ class GuestProfile(models.Model):
     reason = models.TextField()
     bio = models.TextField()
     is_new = models.BooleanField(default=False)
+    user = models.OneToOneField(Registration, on_delete=models.SET_NULL, null=True, blank=True, related_name='guest_profile_link')
+
     def __str__(self):
         return self.name
 
 class Feedback(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone_number = models.CharField(max_length=15)
     feedback = models.TextField()
     is_approved = models.BooleanField(default=False)
     def __str__(self):
@@ -131,15 +134,18 @@ class Subscription(models.Model):
 
 class VideoLike(models.Model):
     user = models.ForeignKey(Registration, on_delete=models.CASCADE)
-    talent_video = models.ForeignKey(Talent, on_delete=models.CASCADE, related_name='likes')
+    talent_video = models.ForeignKey(Talent, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE, related_name='likes', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'talent_video')
+        # unique_together = ('user', 'talent_video') # Removing this to handle both types manually or via validation
+        pass
 
 class VideoComment(models.Model):
     user = models.ForeignKey(Registration, on_delete=models.CASCADE)
-    talent_video = models.ForeignKey(Talent, on_delete=models.CASCADE, related_name='comments')
+    talent_video = models.ForeignKey(Talent, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -154,6 +160,7 @@ class Notification(models.Model):
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
     text = models.TextField()
     talent_video = models.ForeignKey(Talent, on_delete=models.CASCADE, null=True, blank=True)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

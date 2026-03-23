@@ -77,18 +77,23 @@ function Play() {
     }
   }, []);
 
-  const handleSeek = (e) => {
-    const time = parseFloat(e.target.value);
-    setCurrentTime(time);
-    if (videoRef.current && !isNaN(time)) {
-      videoRef.current.currentTime = time;
-    }
-  };
-
   const onTimeUpdate = () => {
     if (!isSeeking && videoRef.current) {
       setCurrentTime(videoRef.current.currentTime);
     }
+  };
+
+  const handleSeek = (e) => {
+    const time = parseFloat(e.target.value);
+    setCurrentTime(time);
+  };
+
+  const handleSeekCommit = (e) => {
+    const time = parseFloat(e.target.value);
+    if (videoRef.current && !isNaN(time)) {
+      videoRef.current.currentTime = time;
+    }
+    setIsSeeking(false);
   };
 
   const togglePlay = useCallback(() => {
@@ -104,6 +109,8 @@ function Play() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+
       if (e.key === "ArrowRight") {
         e.preventDefault();
         skipForward();
@@ -123,27 +130,36 @@ function Play() {
     if (videoId && videoId.startsWith("ep_")) {
       const actualId = videoId.split("_")[1];
       getEpisodeById(actualId).then((data) => {
-        if (data && data.full_video) {
+        if (data) {
           setVideoData({
+            id: data.id,
             title: data.name,
             desc: data.bio,
-            videoUrl: data.full_video
+            videoUrl: data.full_video,
+            subtitle: "EXCLUSIVE EPISODE",
+            uploaderId: data.guest_user_id || (data.guest_data?.user), // We'll need to ensure these are in the serializer
+            isEpisode: true
           });
-          setIsYouTube(false);
-        } else {
-          setIsYouTube(true);
+          setLikes(data.likes_count || 0);
+          setIsLiked(data.is_liked || false);
+          setIsSubscribed(data.is_following || false);
+          setIsYouTube(!data.full_video);
         }
       });
     } else if (videoId && !isNaN(videoId)) {
       getTalentById(videoId).then((data) => {
         if (data && data.talentvideo) {
           setVideoData({
+            id: data.id,
             title: data.name,
             desc: data.desc_of_talent,
             videoUrl: data.talentvideo,
             subtitle: `${data.talent} - Performance`,
             uploaderId: data.user,
-            id: data.id
+            uploader_username: data.uploader_username,
+            uploader_full_name: data.uploader_full_name,
+            uploader_profile: data.uploader_profile,
+            isEpisode: false
           });
           setLikes(data.likes_count || 0);
           setIsLiked(data.is_liked || false);
@@ -169,7 +185,7 @@ function Play() {
 
   const handleLike = () => {
     if(!videoData?.id) return;
-    toggleLike(videoData.id).then(res => {
+    toggleLike(videoData.id, videoData.isEpisode).then(res => {
       setIsLiked(res.liked);
       setLikes(res.count);
     }).catch(console.error);
@@ -177,19 +193,19 @@ function Play() {
 
   const loadCommentsList = () => {
     if(!videoData?.id) return;
-    getComments(videoData.id).then(res => setComments(res)).catch(console.error);
+    getComments(videoData.id, videoData.isEpisode).then(res => setComments(res)).catch(console.error);
   };
   
   useEffect(() => {
     if(videoData?.id) {
         loadCommentsList();
     }
-  }, [videoData?.id]);
+  }, [videoData?.id, videoData?.isEpisode]);
   
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if(!commentText.trim() || !videoData?.id) return;
-    postComment(videoData.id, commentText).then(res => {
+    postComment(videoData.id, commentText, videoData.isEpisode).then(res => {
       setComments([res, ...comments]);
       setCommentText("");
     }).catch(console.error);
@@ -228,179 +244,166 @@ function Play() {
             <FiArrowLeft />
             <span>EXIT THEATER</span>
           </button>
-          <div className="nav-metadata">
-             <span className="live-pill">TALKSHOW THEATER</span>
-          </div>
         </div>
 
         <div className="theater-header-cinematic">
-           <span className="info-category">
-             {videoData?.subtitle || "TALKSHOW EXCLUSIVE"}
-           </span>
-           <div className="theater-header-main-row">
-             <div className="title-bio-stack">
-               <h1 className="cinematic-title-top">{videoData?.title || "UNNAMED STORY"}</h1>
-               <p className="cinematic-bio-top">
-                 {videoData?.desc || "Experience the depth of talent and story in this exclusive feature."}
-               </p>
-             </div>
+          <div className="header-top-row">
+            <span className="info-category">
+              {videoData?.subtitle || (videoId?.startsWith("ep_") ? "EXCLUSIVE EPISODE" : "TALENT STORY")}
+            </span>
+          </div>
+          
+          <h1 className="cinematic-title-primary">{videoData?.title || "UNNAMED STORY"}</h1>
+          
+          <div className="theater-metadata-row">
+            {videoData?.uploaderId && (
+              <Link to={`/user/${videoData.uploaderId}`} className="uploader-identity">
+                <img src={getFullUrl(videoData.uploader_profile)} alt={videoData.uploader_username} className="uploader-avatar" />
+                <div className="uploader-info">
+                  <span className="uploader-name">{videoData.uploader_full_name || videoData.uploader_username}</span>
+                </div>
+              </Link>
+            )}
+            
+            <div className="metadata-divider-v"></div>
+            
+            <div className="video-stats-horizontal">
+              <span className="stat-unit"><FiHeart className="stat-icon" /> {likes}</span>
+              <span className="stat-unit"><FiMessageSquare className="stat-icon" /> {comments.length}</span>
+            </div>
 
-             {videoData?.uploaderId && (
-               <Link to={`/user/${videoData.uploaderId}`} className="uploader-mini-card">
-                 <div className="uploader-avatar-wrapper">
-                   <img src={getFullUrl(videoData.uploader_profile)} alt={videoData.uploader_username} className="uploader-avatar" />
-                   <div className="avatar-ring"></div>
-                 </div>
-                 <div className="uploader-meta">
-                   <span className="uploader-label">STORY BY</span>
-                   <span className="uploader-name">{videoData.uploader_full_name || videoData.uploader_username}</span>
-                 </div>
-               </Link>
-             )}
-           </div>
+            <div className="horizontal-actions-group">
+              <button className={`premium-action-btn like ${isLiked ? 'active' : ''}`} onClick={handleLike}>
+                {isLiked ? <FiHeart fill="currentColor" /> : <FiHeart />}
+                <span>{isLiked ? 'LIKED' : 'LIKE'}</span>
+              </button>
+              
+              {videoData?.uploaderId && user?.id !== videoData.uploaderId && (
+                <button className={`premium-action-btn follow ${isSubscribed ? 'active' : ''}`} onClick={handleFollow}>
+                  {isSubscribed ? <FiCheck /> : <FiUserPlus />}
+                  <span>{isSubscribed ? 'FOLLOWING' : 'FOLLOW'}</span>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="theater-main">
-          <div className="theater-left-actions">
-             <div className="vertical-social-actions">
-                {videoData?.id && (
-                  <div className="social-stack">
-                    <button className={`action-pill-vertical ${isLiked ? 'active' : ''}`} onClick={handleLike}>
-                      <FiHeart fill={isLiked ? 'white' : 'transparent'} /> 
-                      <span>{likes}</span>
-                    </button>
-                    <div className="action-pill-vertical static">
-                      <FiMessageSquare /> 
-                      <span>{comments.length}</span>
-                    </div>
-                    {videoData?.uploaderId && user?.id !== videoData.uploaderId && (
-                      <button className={`action-pill-vertical follow ${isSubscribed ? 'following' : ''}`} onClick={handleFollow}>
-                        {isSubscribed ? <FiCheck /> : <FiUserPlus />}
-                      </button>
-                    )}
-                  </div>
+        <div className="theater-main-content">
+          <div className="video-stage">
+             <div className="video-hero-unit">
+                {isYouTube ? (
+                   <div className="youtube-wrapper-cinematic">
+                     <iframe
+                       src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+                       title="Cinematic Feed"
+                       frameBorder="0"
+                       allow="autoplay; encrypted-media"
+                       allowFullScreen
+                     />
+                   </div>
+                ) : (
+                   <div className="native-player-box">
+                     <video
+                       ref={videoRef}
+                       src={videoData ? getFullUrl(videoData.videoUrl) : null}
+                       className="cinematic-video-element"
+                       onClick={togglePlay}
+                       onTimeUpdate={onTimeUpdate}
+                       onLoadedMetadata={() => setDuration(videoRef.current.duration)}
+                       onPlay={() => setIsPlaying(true)}
+                       onPause={() => setIsPlaying(false)}
+                     />
+
+                     <div className="cinematic-hud">
+                        <div className="hud-top">
+                           <div className="hud-slider-wrapper">
+                             <input
+                               type="range"
+                               min="0"
+                               max={duration || 0}
+                               value={currentTime}
+                               onInput={handleSeek}
+                               onMouseDown={() => setIsSeeking(true)}
+                               onChange={handleSeekCommit}
+                               className="hud-slider"
+                               style={{ "--progress": `${(currentTime / (duration || 1)) * 100}%` }}
+                             />
+                             <div className="thumb-time-tag" style={{ left: `${(currentTime / (duration || 1)) * 100}%` }}>
+                               {formatTime(currentTime)}
+                             </div>
+                           </div>
+                        </div>
+                        <div className="hud-bottom">
+                           <div className="hud-group">
+                              <button className="hud-icon-btn" onClick={togglePlay}>
+                                 {isPlaying ? <FiPause /> : <FiPlay />}
+                              </button>
+                              <div className="hud-time">
+                                 <span>{formatTime(currentTime)}</span>
+                                 <span className="dim">/</span>
+                                 <span className="dim">{formatTime(duration)}</span>
+                              </div>
+                           </div>
+
+                           <div className="hud-group center">
+                              {/* Skip buttons removed as per user request */}
+                           </div>
+
+                           <div className="hud-group right">
+                              <button className="hud-icon-btn" onClick={toggleFullScreen}>
+                                 <FiMaximize />
+                              </button>
+                           </div>
+                        </div>
+                     </div>
+                   </div>
                 )}
              </div>
+             
+             <div className="video-description-box">
+                <h3>About this story</h3>
+                <p>{videoData?.desc || "Experience the depth of talent and story in this exclusive feature."}</p>
+             </div>
+          </div>
 
-             <div className="theater-comments-box-left">
-                  <div className="comments-header-cinematic">
-                    <h3>REACTIONS</h3>
+          <div className="theater-sidebar">
+             <div className="chat-container-premium">
+                  <div className="chat-header">
+                    <h3>COMMUNITY REACTION</h3>
+                    <span className="count-tag">{comments.length}</span>
                   </div>
 
-                  <form onSubmit={handleCommentSubmit} className="comment-input-wrapper-mini">
+                  <form onSubmit={handleCommentSubmit} className="chat-input-premium">
                     <input 
                       type="text" 
                       value={commentText} 
                       onChange={(e) => setCommentText(e.target.value)} 
-                      placeholder="Share thoughts..."
+                      placeholder="Share your thoughts..."
                     />
                     <button type="submit" disabled={!commentText.trim()}>SEND</button>
                   </form>
 
-                  <div className="comments-scroll-area-left">
+                  <div className="chat-scroll-area">
                     {comments.map(c => (
-                       <div key={c.id} className="comment-thread-item-mini">
-                         <div className="comment-avatar-link-wrapper">
-                           <Link to={`/user/${c.user}`}>
-                             <img src={getFullUrl(c.user_profile)} alt={c.username} className="commenter-avatar" />
-                           </Link>
-                         </div>
-                         <div className="comment-content-mini">
-                           <div className="comment-user-info">
-                             <div className="author-meta-studio">
-                               <Link to={`/user/${c.user}`} className="comment-author-link">
-                                 {c.full_name || c.username}
-                               </Link>
-                               <span className="comment-dot">•</span>
-                               <span className="comment-time-relative">{formatRelativeTime(c.created_at)}</span>
-                             </div>
+                       <div key={c.id} className="chat-item">
+                         <Link to={`/user/${c.user}`} className="chat-avatar-link">
+                           <img src={getFullUrl(c.user_profile)} alt={c.username} className="chat-avatar" />
+                         </Link>
+                         <div className="chat-content">
+                           <div className="chat-meta">
+                             <Link to={`/user/${c.user}`} className="chat-author">{c.full_name || c.username}</Link>
+                             <span className="chat-time">{formatRelativeTime(c.created_at)}</span>
                            </div>
-                           <p className="comment-body-text-mini">{c.text}</p>
+                           <p className="chat-text">{c.text}</p>
                          </div>
                         {user?.id === c.user && (
-                          <button 
-                            onClick={() => handleDeleteComment(c.id)}
-                            className="delete-comment-btn-mini"
-                          >
-                            ✖
-                          </button>
+                          <button onClick={() => handleDeleteComment(c.id)} className="chat-delete-btn">✖</button>
                         )}
                       </div>
                     ))}
-                    {comments.length === 0 && <div className="no-comments-placeholder-mini">Be the first to react.</div>}
+                    {comments.length === 0 && <div className="chat-empty">Be the first to join the conversation.</div>}
                   </div>
                 </div>
-          </div>
-
-          <div className="video-hero-unit">
-             {isYouTube ? (
-                <div className="youtube-wrapper-cinematic">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-                    title="Cinematic Feed"
-                    frameBorder="0"
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                  />
-                </div>
-             ) : (
-                <div className="native-player-box">
-                  <video
-                    ref={videoRef}
-                    src={videoData ? getFullUrl(videoData.videoUrl) : null}
-                    className="cinematic-video-element"
-                    onClick={togglePlay}
-                    onTimeUpdate={onTimeUpdate}
-                    onLoadedMetadata={() => setDuration(videoRef.current.duration)}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                  />
-
-                  <div className="cinematic-hud">
-                     <div className="hud-top">
-                        <input
-                          type="range"
-                          min="0"
-                          max={duration || 0}
-                          value={currentTime}
-                          onChange={handleSeek}
-                          onMouseDown={() => setIsSeeking(true)}
-                          onMouseUp={() => setIsSeeking(false)}
-                          className="hud-slider"
-                        />
-                     </div>
-                     <div className="hud-bottom">
-                        <div className="hud-group">
-                           <button className="hud-icon-btn" onClick={togglePlay}>
-                              {isPlaying ? <FiPause /> : <FiPlay />}
-                           </button>
-                           <div className="hud-time">
-                              <span>{formatTime(currentTime)}</span>
-                              <span className="dim">/</span>
-                              <span className="dim">{formatTime(duration)}</span>
-                           </div>
-                        </div>
-
-                        <div className="hud-group center">
-                           <button className="hud-skip-btn" onClick={skipBackward}>
-                              <FiRotateCcw />
-                              <span>10</span>
-                           </button>
-                           <button className="hud-skip-btn" onClick={skipForward}>
-                              <FiRotateCw />
-                              <span>10</span>
-                           </button>
-                        </div>
-
-                        <div className="hud-group right">
-                           <button className="hud-icon-btn" onClick={toggleFullScreen}>
-                              <FiMaximize />
-                           </button>
-                        </div>
-                     </div>
-                  </div>
-                </div>
-             )}
           </div>
         </div>
 

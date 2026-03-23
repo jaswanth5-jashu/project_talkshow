@@ -44,8 +44,22 @@ function registerUser(form) {
     .then((res) => res.data);
 }
 
-function googleLogin() {
-  window.location.href = `${import.meta.env.VITE_API_BASE_URL}/accounts/google/login/`;
+function googleLogin(token) {
+  return apiClient.post("/google/login/", {
+    access_token: token
+  }).then((res) => res.data);
+}
+
+function forgotPassword(email) {
+  return apiClient.post("/forgot-password/", { email }).then((res) => res.data);
+}
+
+function verifyResetOtp(email, otp) {
+  return apiClient.post("/verify-reset-otp/", { email, otp }).then((res) => res.data);
+}
+
+function resetPasswordAPI(email, otp, password) {
+  return apiClient.post("/reset-password/", { email, otp, password }).then((res) => res.data);
 }
 
 export {
@@ -54,5 +68,8 @@ export {
   verifyOtpAPI,
   registerUser,
   googleLogin,
-  getRoles
+  getRoles,
+  forgotPassword,
+  verifyResetOtp,
+  resetPasswordAPI,
 };

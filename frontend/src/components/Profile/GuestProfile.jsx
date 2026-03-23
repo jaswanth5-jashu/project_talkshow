@@ -1,8 +1,8 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { FiPlay, FiMapPin, FiCalendar, FiActivity, FiArrowLeft, FiSearch } from "react-icons/fi";
+import { FiPlay, FiMapPin, FiCalendar, FiActivity, FiArrowLeft, FiSearch, FiUserPlus, FiCheck, FiHeart } from "react-icons/fi";
 import { getGuestById, getEpisodes } from "../../api/guestapi";
-import { searchGuests } from "../../api/talentstoriesapi";
+import { searchGuests, toggleSubscribe, toggleLike } from "../../api/talentstoriesapi";
 import { getMediaBase } from "../../api/api";
 import { useAuth } from "../../context/AuthContext";
 import AuthGuard from "../Common/AuthGuard";
@@ -67,6 +67,9 @@ function GuestProfile() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     Promise.all([
@@ -74,9 +77,8 @@ function GuestProfile() {
       getEpisodes()
     ]).then(([guestData, allEpisodes]) => {
       setGuest(guestData);
+      setIsFollowing(guestData.is_following || false);
       
-      // Filter episodes by guest ID
-
       const guestEpisodes = allEpisodes.filter(ep => ep.guest === parseInt(id));
       setEpisodes(guestEpisodes);
       
@@ -86,6 +88,30 @@ function GuestProfile() {
       setLoading(false);
     });
   }, [id]);
+
+  const handleToggleFollow = async () => {
+    if (!isAuthenticated) {
+      setShowGuard(true);
+      return;
+    }
+    if (!guest?.user) return; // Need a linked user to follow
+    setFollowLoading(true);
+    try {
+      const res = await toggleSubscribe(guest.user);
+      setIsFollowing(res.subscribed);
+      // Update local guest object count if needed, or just let it be
+      setGuest(prev => ({
+        ...prev,
+        followers_count: res.subscribed ? (prev.followers_count + 1) : Math.max(0, prev.followers_count - 1)
+      }));
+    } catch (error) {
+      console.error("Follow error:", error);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const [selectedPromo, setSelectedPromo] = useState(null);
 
   if (loading) {
     return (
@@ -104,8 +130,31 @@ function GuestProfile() {
     );
   }
 
-  const handleVideoClick = (episodeId) => {
+  const handleVideoClick = (episode) => {
+    setSelectedPromo(episode);
+  };
+
+  const handleWatchFull = (episodeId) => {
     navigate(`/play/ep_${episodeId}`);
+    setSelectedPromo(null);
+  };
+
+  const handleToggleLike = async (episode) => {
+    if (!isAuthenticated) {
+      setShowGuard(true);
+      return;
+    }
+    try {
+      const res = await toggleLike(episode.id, true);
+      setEpisodes(prev => prev.map(ep => 
+        ep.id === episode.id ? { ...ep, is_liked: res.liked, likes_count: res.count } : ep
+      ));
+      if (selectedPromo?.id === episode.id) {
+        setSelectedPromo(prev => ({ ...prev, is_liked: res.liked, likes_count: res.count }));
+      }
+    } catch (error) {
+      console.error("Like error:", error);
+    }
   };
 
   const getFullUrl = (path) => {
@@ -114,152 +163,138 @@ function GuestProfile() {
   };
 
   return (
-    <div className="profile-page">
-      <div className="profile-header-actions">
-        <button className="global-back-btn" onClick={() => navigate("/guests")}>
-          <FiArrowLeft /> Back to Guests
+    <div className="talent-profile-page white-theme">
+      <div className="talent-profile-top-nav">
+        <button className="minimal-back-btn-light" onClick={() => navigate("/guests")}>
+           <FiArrowLeft /> BACK TO LEGENDS
         </button>
-
-        <div className="profile-search-container" ref={searchRef}>
-          <div className="profile-search-bar">
-             <FiSearch className="search_icon" />
-             <input 
-               type="text" 
-               placeholder="Search other legends..." 
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-               onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
-             />
-             {isSearching && <div className="search-loader"></div>}
-          </div>
-
-          {showSearchResults && (
-            <div className="profile-search-results">
-              {searchResults.length > 0 ? (
-                searchResults.map(result => (
-                  <div 
-                    key={result.id} 
-                    className="guest-result-item"
-                    onClick={() => handleResultClick(result.id)}
-                  >
-                    <div className="result-avatar">
-                      <img src={getFullUrl(result.profile)} alt={result.name} />
-                    </div>
-                    <div className="result-info">
-                      <div className="result-top">
-                        <span className="result-name">{result.name}</span>
-                        {result.is_new && <span className="result-id">NEW</span>}
-                      </div>
-                      <div className="result-meta">
-                        <span className="result-designation">{result.designation}</span>
-                      </div>
-                      {result.bio && (
-                        <p className="result-bio-preview">{result.bio.substring(0, 80)}...</p>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : searchQuery.length >= 2 && !isSearching ? (
-                <div className="search-no-results">
-                   <FiSearch />
-                   <div className="no-res-content">
-                      <h4>No legends found for "{searchQuery}"</h4>
-                      <p>Try searching for other featured guests.</p>
-                   </div>
-                </div>
-              ) : null}
-            </div>
-          )}
-        </div>
       </div>
-      <div className="profile-container">
-        
-        <div className="profile-left">
-          <img src={getFullUrl(guest.profile)} alt={guest.name} />
-          {guest.is_new && <div className="id-badge">NEW</div>}
+
+      <div className="talent-profile-hero-card">
+        <div className="talent-hero-image-showcase">
+          <div className="collage-base small-dp">
+             <img src={getFullUrl(guest.profile)} alt={guest.name} className="main-talent-image" />
+             {guest.is_new && (
+               <div className="floating-card-mini img-2">NEW</div>
+             )}
+          </div>
         </div>
 
-        <div className="profile-right">
-          <div className="header-meta">
-            <span className="tag-premium">Featured Legend</span>
-            <div className="status-indicator">
-              <span className="dot"></span> Verified
-            </div>
-          </div>
-
-          <h1>{guest.name}</h1>
-          <p className="designation">{guest.designation}</p>
+        <div className="talent-hero-info">
+          <span className="talent-category-tag">FEATURED LEGEND</span>
+          <h1 className="talent-name-primary">{guest.name}</h1>
           
-          <div className="guest-meta-grid">
+          <div className="talent-hero-actions">
+            <button 
+              className={`follow-btn-classical-red ${isFollowing ? 'active' : ''}`} 
+              onClick={handleToggleFollow}
+              disabled={followLoading || !guest.user}
+            >
+              {isFollowing ? <FiCheck /> : <FiUserPlus />}
+              <span>{isFollowing ? 'FOLLOWING' : 'FOLLOW'}</span>
+            </button>
+          </div>
+
+          <div className="talent-stats-classical">
+            <div className="stat-unit">
+              <span className="stat-num">{guest.followers_count || 0}</span>
+              <span className="stat-lab">FOLLOWERS</span>
+            </div>
+            <div className="stat-unit">
+              <span className="stat-num">{guest.uploaded_count || 0}</span>
+              <span className="stat-lab">EPISODES</span>
+            </div>
+          </div>
+
+          <div className="talent-meta-classical">
             <div className="meta-item">
-              <FiActivity /> <span><strong>Reason:</strong> {guest.reason}</span>
+              <FiActivity /> <span>{guest.designation}</span>
             </div>
           </div>
 
-          <div className="guest-bio-section">
-            <h3>Biography</h3>
-            <p className="guest-bio">
-              {guest.bio}
-            </p>
-          </div>
-
-          <div className="server-check-dashboard">
-            <div className="dashboard-item">
-              <FiCalendar />
-              <div>
-                <p className="label">Last Appearance</p>
-                <p className="val">{new Date().toLocaleDateString()}</p>
-              </div>
-            </div>
-            <div className="dashboard-item">
-              <FiActivity />
-              <div>
-                <p className="label">Connectivity</p>
-                <p className="val">Stable</p>
-              </div>
-            </div>
+          <div className="talent-quote-classical">
+            <div className="quote-bar"></div>
+            <p>"{guest.reason}"</p>
           </div>
         </div>
-
       </div>
 
-      <div className="guest-video">
-        <div className="section-header">
-          <h2>Episode Highlights</h2>
-          <p>Watch full performances and exclusive sessions</p>
-        </div>
+      <div className="talent-journey-classical">
+        <h3>Biography</h3>
+        <p>{guest.bio}</p>
+      </div>
 
-        <div className="video-grid">
+      <div className="talent-content-divider"></div>
+
+      <div className="talent-video-section">
+        <h2>Episode Highlights</h2>
+        <div className="performance-grid-small">
           {episodes.map((episode) => (
-            <div key={episode.id} className="video-card" onClick={() => handleVideoClick(episode.id)}>
-              <div className="video-thumbnail">
+            <div key={episode.id} className="mini-video-card" onClick={() => handleVideoClick(episode)}>
+              <div className="mini-thumbnail-box">
                 <img src={getFullUrl(episode.thumbnail)} alt={episode.name} />
-                <div className="play-overlay-icon">
+                <div className="mini-play-btn">
                   <FiPlay />
                 </div>
               </div>
-              <div className="video-metadata">
-                <h3>{episode.name}</h3>
-                <p className="ep-desc">{episode.bio.substring(0, 100)}...</p>
-                <div className="meta-bottom">
-                   <span className="duration">Episode #{episode.id}</span>
-                </div>
+              <div className="mini-video-info">
+                <h4>{episode.name}</h4>
+                <span>EPISODE #{episode.id}</span>
               </div>
             </div>
           ))}
-          {episodes.length === 0 && (
-            <div className="no-videos-box">
-              <p>No highlights available yet for this legend.</p>
-            </div>
-          )}
         </div>
+        {episodes.length === 0 && (
+          <div className="no-videos-box">
+            <p>No highlights available yet.</p>
+          </div>
+        )}
       </div>
 
       {showGuard && (
         <AuthGuard 
           onClose={() => setShowGuard(false)} 
-          message="Unlock the full legendary experience! Please login or register to explore complete profiles and exclusive highlights." 
+          message="Unlock the full experience! Please login or register to follow legends." 
         />
+      )}
+
+      {selectedPromo && (
+        <div className="promo-overlay-modal" onClick={() => setSelectedPromo(null)}>
+          <div className="promo-modal-content" onClick={(e) => e.stopPropagation()}>
+             <button className="promo-close-btn" onClick={() => setSelectedPromo(null)}>×</button>
+             
+             <div className="promo-video-container">
+                <video 
+                  src={getFullUrl(selectedPromo.promo_video)} 
+                  controls 
+                  autoPlay 
+                  className="promo-video-player"
+                />
+             </div>
+
+             <div className="promo-details">
+                <div className="promo-title-row">
+                   <h3>{selectedPromo.name}</h3>
+                   <div className="promo-like-section">
+                      <button 
+                        className={`promo-like-btn ${selectedPromo.is_liked ? 'liked' : ''}`}
+                        onClick={() => handleToggleLike(selectedPromo)}
+                      >
+                        <FiHeart />
+                      </button>
+                      <span className="promo-likes-count">{selectedPromo.likes_count || 0} LIKES</span>
+                   </div>
+                </div>
+                <p>Previewing official promo of the highlight.</p>
+                
+                <div className="promo-modal-actions">
+                   <button className="watch-full-btn-premium" onClick={() => handleWatchFull(selectedPromo.id)}>
+                      <FiPlay /> WATCH FULL EPISODE
+                   </button>
+                </div>
+             </div>
+          </div>
+        </div>
       )}
     </div>
   );

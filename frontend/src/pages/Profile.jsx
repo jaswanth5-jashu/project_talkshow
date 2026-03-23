@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiUser, FiMail, FiLock, FiPhone, FiCamera, FiCheckCircle, FiAlertCircle, FiSettings, FiLogOut, FiShield, FiHeart, FiMessageSquare, FiPlay, FiTrash2 } from "react-icons/fi";
-import { updateProfileAPI, getProfileAPI } from "../api/profileapi";
+import { updateProfileAPI, getProfileAPI, requestAccountDeletionAPI, confirmAccountDeletionAPI } from "../api/profileapi";
 import { getUserVideos, getMySubmissions, dismissSubmission, deleteTalent, deleteSubmission } from "../api/talentstoriesapi";
 import { useAuth } from "../context/AuthContext";
 import { getMediaBase } from "../api/api";
@@ -47,6 +47,14 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [showEmailSection, setShowEmailSection] = useState(false);
   const [showPassSection, setShowPassSection] = useState(false);
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    length: false,
+    capital: false,
+    number: false,
+    special: false,
+  });
+  const [showDeleteSection, setShowDeleteSection] = useState(false);
+  const [deletionFlow, setDeletionFlow] = useState("input"); // "confirm" or "otp"
   const [showFollowModal, setShowFollowModal] = useState(null);
 
   const getImageUrl = (path) => {
@@ -267,6 +275,11 @@ function Profile() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
 
+    if (!Object.values(passwordCriteria).every(Boolean)) {
+      setMessage({ type: "error", text: "Security policy violation: Password does not meet minimum strength requirements." });
+      return;
+    }
+
     if (passFlow === "input" && passwordRef.current.value !== confirmPasswordRef.current.value) {
       setMessage({ type: "error", text: "Password mismatch. Verify both fields match." });
       return;
@@ -293,6 +306,43 @@ function Profile() {
       }
     } catch (err) {
       setMessage({ type: "error", text: "Security disruption." });
+    }
+    setLoading(false);
+  };
+
+  const handleRequestDeletion = async () => {
+    setLoading(true);
+    try {
+      const res = await requestAccountDeletionAPI();
+      if (!res.error) {
+        setDeletionFlow("otp");
+        setOtpArray(["", "", "", "", "", ""]);
+        setMessage({ type: "success", text: "Verification code sent to your email. This is the final step." });
+      } else {
+        setMessage({ type: "error", text: res.error });
+      }
+    } catch (err) {
+      setMessage({ type: "error", text: "Deletion request failed." });
+    }
+    setLoading(false);
+  };
+
+  const handleConfirmDeletion = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await confirmAccountDeletionAPI(otpArray.join(""));
+      if (!res.error) {
+        setMessage({ type: "success", text: "Account deactivated. You will be logged out. Grace period: 30 days." });
+        setTimeout(() => {
+          logout();
+          navigate("/Login");
+        }, 3000);
+      } else {
+        setMessage({ type: "error", text: res.error });
+      }
+    } catch (err) {
+      setMessage({ type: "error", text: "Verification failed." });
     }
     setLoading(false);
   };
@@ -440,12 +490,67 @@ function Profile() {
                   </button>
                   <button 
                     className={`security-nav-btn ${showPassSection ? 'active' : ''}`}
-                    onClick={() => {setShowPassSection(!showPassSection); setShowEmailSection(false);}}
+                    onClick={() => {setShowPassSection(!showPassSection); setShowEmailSection(false); setShowDeleteSection(false);}}
                   >
                     <FiShield /> CHANGE PASSWORD
                   </button>
+                  <button 
+                    className={`security-nav-btn delete-nav-btn ${showDeleteSection ? 'active' : ''}`}
+                    onClick={() => {setShowDeleteSection(!showDeleteSection); setShowEmailSection(false); setShowPassSection(false);}}
+                  >
+                    <FiTrash2 /> DELETE ACCOUNT
+                  </button>
                </div>
             </div>
+
+            {showDeleteSection && (
+              <div className="settings-card glass-panel wide danger-zone animate-in">
+                <div className="card-header">
+                  <FiAlertCircle className="header-icon danger" />
+                  <div className="header-text">
+                    <h3 className="danger-title">DANGER ZONE</h3>
+                  </div>
+                </div>
+
+                <div className="cinematic-form">
+                  {deletionFlow === "input" ? (
+                    <div className="deletion-warning-box">
+                      <p>Once you initiate deletion, your account will be <b>deactivated</b> for 30 days. You can reactivate it by logging back in during this period.</p>
+                      <p className="final-warning">After 30 days, your data will be <b>permanently purged</b> from our neural grid.</p>
+                      <button 
+                        onClick={handleRequestDeletion} 
+                        className="action-btn-cinematic danger-btn"
+                        disabled={loading}
+                      >
+                        INITIATE PURGE SEQUENCE
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleConfirmDeletion} className="otp-step">
+                      <label className="cinematic-label danger">CONFIRM PURGE WITH SECURITY KEY</label>
+                      <div className="otp-six-box">
+                        {otpArray.map((digit, idx) => (
+                          <input
+                            key={idx}
+                            id={`otp-${idx}`}
+                            type="text"
+                            maxLength="1"
+                            value={digit}
+                            onChange={(e) => handleOtpChange(idx, e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(idx, e)}
+                            autoFocus={idx === 0}
+                          />
+                        ))}
+                      </div>
+                      <button type="submit" className="action-btn-cinematic danger-btn" disabled={loading || otpArray.includes("")}>
+                        EXECUTE PERMANENT DELETION
+                      </button>
+                      <button type="button" className="text-btn-cinematic" onClick={() => setDeletionFlow("input")}>ABORT SEQUENCE</button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            )}
 
             {showEmailSection && (
               <div className="settings-card glass-panel wide animate-in">
@@ -531,8 +636,23 @@ function Profile() {
                             ref={passwordRef}
                             placeholder="ENTER SECURE KEY"
                             required
+                            onChange={(e) => {
+                              const pass = e.target.value;
+                              setPasswordCriteria({
+                                length: pass.length >= 6,
+                                capital: /[A-Z]/.test(pass),
+                                number: /[0-9]/.test(pass),
+                                special: /[!@#$%^&*(),.?":{}|<>]/.test(pass),
+                              });
+                            }}
                           />
                         </div>
+                      </div>
+                      <div className="password-checklist">
+                          <p className={passwordCriteria.length ? "met" : "unmet"}>• 6+ Characters</p>
+                          <p className={passwordCriteria.capital ? "met" : "unmet"}>• 1 Capital Letter</p>
+                          <p className={passwordCriteria.number ? "met" : "unmet"}>• 1 Digit</p>
+                          <p className={passwordCriteria.special ? "met" : "unmet"}>• 1 Special Character</p>
                       </div>
                       <div className="cinematic-input-box">
                         <label>CONFIRM ACCESS KEY</label>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { forgotPassword, verifyResetOtp, resetPasswordAPI } from "../../api/loginregisterapi";
 import "../../css/components/Login/ForgotPasswordmain.css";
 
 function ForgotPassword() {
@@ -47,62 +48,43 @@ function ForgotPassword() {
     }
   }
 
-  function sendOtp() {
-    fetch("http://localhost:8000/api/forgot-password/", {
-      method: "POST",
+  const sendOtp = async () => {
+    try {
+      const data = await forgotPassword(email);
+      if (data.message) {
+        setOtpSent(true);
+        setTimer(40);
+        setMessage("OTP sent to email");
+        setMsgType("success");
+      } else {
+        setMessage(data.error);
+        setMsgType("error");
+      }
+    } catch (err) {
+      setMessage("Failed to send OTP. Please try again.");
+      setMsgType("error");
+    }
+  };
 
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const verifyOtp = async () => {
+    try {
+      const data = await verifyResetOtp(email, otp.join(""));
+      if (data.message) {
+        setOtpVerified(true);
+        setOtpSent(false);
+        setMessage("OTP verified");
+        setMsgType("success");
+      } else {
+        setMessage(data.error);
+        setMsgType("error");
+      }
+    } catch (err) {
+      setMessage("OTP verification failed.");
+      setMsgType("error");
+    }
+  };
 
-      body: JSON.stringify({ email }),
-    })
-      .then((res) => res.json())
-
-      .then((data) => {
-        if (data.message) {
-          setOtpSent(true);
-          setTimer(40);
-
-          setMessage("OTP sent to email");
-          setMsgType("success");
-        } else {
-          setMessage(data.error);
-          setMsgType("error");
-        }
-      });
-  }
-
-  function verifyOtp() {
-    fetch("http://localhost:8000/api/verify-reset-otp/", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        email,
-        otp: otp.join(""),
-      }),
-    })
-      .then((res) => res.json())
-
-      .then((data) => {
-        if (data.message) {
-          setOtpVerified(true);
-          setOtpSent(false);
-
-          setMessage("OTP verified");
-          setMsgType("success");
-        } else {
-          setMessage(data.error);
-          setMsgType("error");
-        }
-      });
-  }
-
-  function resetPassword(e) {
+  const resetPassword = async (e) => {
     e.preventDefault();
 
     const new_password = e.target.new_password.value;
@@ -114,35 +96,23 @@ function ForgotPassword() {
       return;
     }
 
-    fetch("http://localhost:8000/api/reset-password/", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        email,
-        otp: otp.join(""),
-        password: new_password,
-      }),
-    })
-      .then((res) => res.json())
-
-      .then((data) => {
-        if (data.message) {
-          setMessage("Password changed successfully");
-          setMsgType("success");
-
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 1500);
-        } else {
-          setMessage(data.error);
-          setMsgType("error");
-        }
-      });
-  }
+    try {
+      const data = await resetPasswordAPI(email, otp.join(""), new_password);
+      if (data.message) {
+        setMessage("Password changed successfully");
+        setMsgType("success");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1500);
+      } else {
+        setMessage(data.error);
+        setMsgType("error");
+      }
+    } catch (err) {
+      setMessage("Password reset failed.");
+      setMsgType("error");
+    }
+  };
 
   return (
     <div className="forgotPage">

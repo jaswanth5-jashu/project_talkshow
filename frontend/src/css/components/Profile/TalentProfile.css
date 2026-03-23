@@ -1,189 +1,457 @@
-.talent-profile-page {
-  padding: 40px 6% 80px;
-  background-color: #f9f9f9;
-  min-height: 100vh;
+/* TALENT PROFILE - WHITE CLASSICAL REDESIGN */
+:root {
+  --tp-white: #ffffff;
+  --tp-bg: #fdfdfd;
+  --tp-accent: #ff0033;
+  --tp-text-main: #111111;
+  --tp-text-dim: #777777;
+  --tp-border: rgba(0, 0, 0, 0.06);
 }
 
-.global-back-btn {
+.talent-profile-page.white-theme {
+  background-color: var(--tp-bg);
+  min-height: 100vh;
+  padding: 40px 6%;
+  font-family: 'Inter', sans-serif;
+  color: var(--tp-text-main);
+}
+
+.talent-profile-top-nav {
+  margin-bottom: 40px;
+}
+
+.minimal-back-btn-light {
+  background: #fff;
+  border: 1px solid var(--tp-border);
+  color: var(--tp-text-dim);
+  padding: 10px 24px;
+  border-radius: 99px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: #ffffff;
-  border: 1.5px solid #eaeaea;
-  padding: 10px 20px;
-  border-radius: 50px;
-  color: #666;
-  font-weight: 700;
+  gap: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 30px;
-  font-size: 0.9rem;
-  width: fit-content;
   box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
-.global-back-btn:hover {
-  border-color: #ff0000;
-  color: #ff0000;
-  transform: translateX(-5px);
-  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.1);
+.minimal-back-btn-light:hover {
+  border-color: var(--tp-accent);
+  color: var(--tp-accent);
+  transform: translateX(-4px);
 }
 
-.global-back-btn svg {
-  font-size: 1.1rem;
-}
-
-.talent-profile-container {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 60px;
+.talent-profile-hero-card {
   background: #fff;
-  padding: 40px;
-  border-radius: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
+  padding: 60px 80px;
+  display: flex;
+  gap: 100px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0,0.02);
+  align-items: center;
   margin-bottom: 60px;
 }
 
-.talent-profile-left img {
+/* IMAGE COLLAGE AREA */
+.talent-hero-image-showcase {
+  position: relative;
+}
+
+.collage-base.small-dp {
+  width: 280px;
+  height: 280px;
+}
+
+.main-talent-image {
   width: 100%;
-  aspect-ratio: 1/1;
+  height: 100%;
   object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
 }
 
-.talent-profile-right h4 {
-  color: #ff0000;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 600;
-  margin-bottom: 10px;
+.floating-card-mini {
+  position: absolute;
+  background: #fff;
+  padding: 8px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
-.talent-profile-right h1 {
-  font-size: 3.5rem;
-  margin: 0;
-  color: #111;
+.floating-card-mini.img-1 {
+  width: 140px;
+  height: 140px;
+  bottom: -30px;
+  left: -30px;
+  transform: rotate(-5deg);
 }
 
-.talent-location {
+.floating-card-mini.img-1 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.floating-card-mini.img-2 {
+  width: 80px;
+  height: 80px;
+  top: 40px;
+  right: -20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: #666;
-  font-size: 1.1rem;
-  margin: 15px 0 30px;
+  justify-content: center;
+  background: var(--tp-accent);
+  color: #fff;
+  transform: rotate(10deg);
 }
 
-.talent-quotation {
-  font-style: italic;
+.play-icon-mini {
+  font-size: 24px;
+}
+
+/* INFO AREA */
+.talent-hero-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.talent-category-tag {
+  color: var(--tp-accent);
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.talent-name-primary {
+  font-family: 'Outfit', sans-serif;
+  font-size: 4.5rem;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin: 0 0 30px;
+  line-height: 0.9;
+}
+
+.talent-hero-actions {
+  margin-bottom: 40px;
+}
+
+.follow-btn-classical-red {
+  background: var(--tp-accent);
+  border: none;
+  color: #fff;
+  padding: 14px 40px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 10px 25px rgba(255, 0, 51, 0.2);
+}
+
+.follow-btn-classical-red:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(255, 0, 51, 0.3);
+  background: var(--tp-text-main);
+}
+
+.follow-btn-classical-red.active {
+  background: #f0f0f0;
+  color: var(--tp-text-dim);
+  box-shadow: none;
+}
+
+.follow-btn-classical-outline {
+  background: transparent;
+  border: 2px solid var(--tp-border);
+  color: var(--tp-text-dim);
+  padding: 14px 40px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.follow-btn-classical-outline:hover {
+  border-color: var(--tp-text-main);
+  color: var(--tp-text-main);
+}
+
+/* STATS AREA */
+.talent-stats-classical {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+.stat-unit {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--tp-text-main);
+}
+
+.stat-lab {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: var(--tp-text-dim);
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.talent-meta-classical {
+  margin-bottom: 40px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tp-text-dim);
+}
+
+.meta-item svg {
+  color: var(--tp-accent);
+}
+
+/* QUOTE AREA */
+.talent-quote-classical {
+  position: relative;
+  display: flex;
+  gap: 24px;
+  margin-bottom: 50px;
+}
+
+.quote-bar {
+  width: 4px;
+  height: auto;
+  min-height: 40px;
+  background: var(--tp-accent);
+  border-radius: 99px;
+}
+
+.talent-quote-classical p {
   font-size: 1.5rem;
-  color: #333;
-  border-left: 5px solid #ff0000;
-  padding-left: 20px;
-  margin: 30px 0;
-}
-
-.talent-story {
-  line-height: 1.8;
+  font-weight: 500;
+  font-style: italic;
   color: #444;
-  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.4;
 }
 
-.talent-video-section {
-  margin-top: 60px;
+/* ABOUT AREA */
+.talent-journey-classical {
+  border-top: 1px solid var(--tp-border);
+  padding-top: 40px;
 }
 
-.talent-video-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 30px;
-  text-align: center;
+.talent-journey-classical h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 20px;
+  color: var(--tp-text-main);
+}
+
+.talent-journey-classical p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--tp-text-dim);
+  margin-bottom: 20px;
+}
+
+.journey-extra {
+  font-weight: 500;
+  color: #555 !important;
+}
+
+.talent-content-divider {
+  height: 1px;
+  background: var(--tp-border);
+  margin: 60px 0;
+}
+
+/* VIDEO SECTION */
+.talent-video-section h2, .related-talents-section h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 40px;
 }
 
 .main-video-preview {
-  max-width: 900px;
-  margin: 0 auto 60px;
-  cursor: pointer;
+  background: #fff;
+  border-radius: 40px;
+  padding: 30px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--tp-border);
 }
 
 .video-thumbnail-container {
-  position: relative;
-  aspect-ratio: 16/9;
-  border-radius: 24px;
+  border-radius: 20px;
+}
+
+/* RELATED SECTION */
+.related-talents-section {
+  padding-bottom: 60px;
+}
+
+/* MOBILE RESPONSIVENESS */
+@media (max-width: 1200px) {
+  .talent-profile-hero-card {
+    padding: 60px;
+    gap: 60px;
+  }
+  .talent-name-primary { font-size: 3.5rem; }
+}
+
+@media (max-width: 1024px) {
+  .talent-profile-hero-card {
+    flex-direction: column;
+    padding: 40px;
+    gap: 40px;
+    text-align: center;
+  }
+  .talent-hero-image-showcase {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .talent-stats-classical {
+    justify-content: center;
+  }
+  .talent-hero-actions {
+    display: flex;
+    justify-content: center;
+  }
+  .talent-meta-classical {
+    display: flex;
+    justify-content: center;
+  }
+  .talent-quote-classical {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.performance-grid-small {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.mini-video-card {
+  background: #fff;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid var(--tp-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.video-thumbnail-container:hover {
-  transform: scale(1.02);
+.mini-video-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
 }
 
-.talent-main-video-poster {
+.mini-thumbnail-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.mini-thumbnail-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.play-overlay {
+.mini-play-btn {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  color: var(--tp-accent);
+  border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  transition: background 0.3s;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
-.video-thumbnail-container:hover .play-overlay {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.play-btn-large {
-  font-size: 80px;
+.mini-video-card:hover .mini-play-btn {
+  background: var(--tp-accent);
   color: #fff;
-  filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
-  transition: transform 0.3s;
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
-.video-thumbnail-container:hover .play-btn-large {
-  transform: scale(1.2);
+.mini-video-info {
+  padding: 15px 20px;
 }
 
-.related-talents-section {
-  margin-top: 80px;
+.mini-video-info h4 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+  color: var(--tp-text-main);
 }
 
-.related-talents-section h2 {
-  font-size: 2.2rem;
-  margin-bottom: 40px;
-  text-align: left;
+.mini-video-info span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--tp-accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60vh;
-  font-size: 1.5rem;
-}
-
-@media (max-width: 1024px) {
-  .talent-profile-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
+@media (max-width: 600px) {
+  .talent-profile-page.white-theme {
+    padding: 20px 4%;
   }
-}
-
-@media (max-width: 768px) {
-  .talent-profile-page {
-    padding: 40px 4%;
+  .talent-profile-top-nav {
+     margin-bottom: 20px;
   }
-
-  .talent-profile-right h1 {
-    font-size: 2.5rem;
+  .talent-profile-hero-card {
+    padding: 30px 20px;
+    border-radius: 30px;
+    gap: 30px;
+  }
+  .collage-base.small-dp {
+    width: 220px;
+    height: 220px;
+  }
+  .talent-name-primary { font-size: 2.2rem; }
+  .talent-stats-classical {
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .performance-grid-small {
+     grid-template-columns: 1fr;
   }
 }

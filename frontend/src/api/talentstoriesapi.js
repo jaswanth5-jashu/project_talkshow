@@ -16,16 +16,16 @@ export function submitTalent(formData) {
   }).then((res) => res.data);
 }
 
-export function toggleLike(id) {
-  return apiClient.post(`/talent/${id}/like/`).then(res => res.data);
+export function toggleLike(id, isEpisode = false) {
+  return apiClient.post(`/talent/${id}/like/`, { is_episode: isEpisode }).then(res => res.data);
 }
 
-export function getComments(id) {
-  return apiClient.get(`/talent/${id}/comments/`).then(res => res.data);
+export function getComments(id, isEpisode = false) {
+  return apiClient.get(`/talent/${id}/comments/?is_episode=${isEpisode}`).then(res => res.data);
 }
 
-export function postComment(id, text) {
-  return apiClient.post(`/talent/${id}/comments/`, { text }).then(res => res.data);
+export function postComment(id, text, isEpisode = false) {
+  return apiClient.post(`/talent/${id}/comments/`, { text, is_episode: isEpisode }).then(res => res.data);
 }
 
 export function toggleSubscribe(userId) {

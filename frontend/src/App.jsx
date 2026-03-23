@@ -17,11 +17,14 @@ import ForgotPassword from './pages/ForgotPasswordmain'
 import TalentProfile from './pages/TalentProfile'
 import Profile from './pages/Profile'
 
+import SupportAssistant from './components/common/SupportAssistant'
+
 function App() {
 
   return (
     <>
       <ScrollToTop />
+      <SupportAssistant />
       <Header/>
 
       <Routes>

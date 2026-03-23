@@ -88,22 +88,39 @@ function Header() {
                     {notifications.length === 0 ? (
                       <div className="notif-empty">No notifications yet</div>
                     ) : (
-                      notifications.slice(0, 10).map(notif => (
-                        <div key={notif.id} className={`notif-item ${notif.is_read ? 'read' : 'unread'}`}>
-                          <Link to={`/user/${notif.sender}`} className="notif-icon" onClick={() => setShowNotifs(false)}>
-                            {renderIcon(notif.notification_type)}
-                          </Link>
-                          <div className="notif-content">
-                            <Link to={`/user/${notif.sender}`} className="notif-link" onClick={() => setShowNotifs(false)}>
-                              <p>{notif.text}</p>
+                      notifications.slice(0, 10).map(notif => {
+                        const isVideoNotif = ['like', 'comment'].includes(notif.notification_type);
+                        const contentLink = isVideoNotif ? `/play/${notif.talent_video}` : `/user/${notif.sender}`;
+                        const senderLink = `/user/${notif.sender}`;
+
+                        return (
+                          <div key={notif.id} className={`notif-item ${notif.is_read ? 'read' : 'unread'}`}>
+                            <Link to={senderLink} className="notif-avatar-link" onClick={() => setShowNotifs(false)}>
+                              <div className="notif-avatar-mini">
+                                <img src={getImageUrl(notif.sender_profile)} alt="sender" />
+                                <div className={`notif-type-badge ${notif.notification_type}`}>
+                                  {renderIcon(notif.notification_type)}
+                                </div>
+                              </div>
                             </Link>
-                            <span className="notif-time">{new Date(notif.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+
+                            <div className="notif-content">
+                              <div className="notif-text">
+                                <Link to={senderLink} className="notif-sender-name" onClick={() => setShowNotifs(false)}>
+                                  {notif.sender_name}
+                                </Link>
+                                <Link to={contentLink} className="notif-action-text" onClick={() => setShowNotifs(false)}>
+                                  {" "}{notif.text.replace(notif.sender_name, '').trim()}
+                                </Link>
+                              </div>
+                              <span className="notif-time">{new Date(notif.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            {!notif.is_read && (
+                              <button className="mark-read-dot" onClick={(e) => handleMarkRead(e, notif.id)} title="Mark as read"></button>
+                            )}
                           </div>
-                          {!notif.is_read && (
-                            <button className="mark-read-dot" onClick={(e) => handleMarkRead(e, notif.id)} title="Mark as read"></button>
-                          )}
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>

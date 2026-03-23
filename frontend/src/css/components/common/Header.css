@@ -307,12 +307,14 @@ display: none;
   margin: 0;
   font-size: 1rem;
   color: #fff;
+  text-transform: none;
 }
 
 .notif-header span {
   font-size: 0.75rem;
   color: #ff0000;
   font-weight: 600;
+  text-transform: none;
 }
 
 .notif-list {
@@ -337,43 +339,93 @@ display: none;
   background: rgba(255,255,255,0.05);
 }
 
-.notif-icon {
-  font-size: 1.1rem;
-  min-width: 20px;
-  margin-top: 3px;
+.notif-avatar-mini {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
 }
 
-.notif-content p {
+.notif-avatar-mini img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.notif-type-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  background: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  border: 2px solid #000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.notif-type-badge.like { color: #ff4d4d; }
+.notif-type-badge.comment { color: #00d1ff; }
+.notif-type-badge.follow { color: #ff0000; }
+
+.notif-text {
   margin: 0;
   font-size: 0.85rem;
-  color: #ddd;
   line-height: 1.4;
 }
 
+.notif-sender-name {
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.notif-sender-name:hover {
+  text-decoration: underline;
+}
+
+.notif-action-text {
+  color: #bbb;
+  text-decoration: none;
+}
+
+.notif-action-text:hover {
+  color: #fff;
+}
+
 .notif-time {
-  font-size: 0.75rem;
-  color: #666;
+  font-size: 0.7rem;
+  color: #555;
   display: block;
-  margin-top: 5px;
+  margin-top: 4px;
+  font-weight: 600;
 }
 
 .notif-empty {
-  padding: 30px;
+  padding: 40px 20px;
   text-align: center;
-  color: #555;
+  color: #444;
   font-size: 0.9rem;
 }
 
 .mark-read-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background: #ff0000;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   margin-left: auto;
-  align-self: center;
-  box-shadow: 0 0 5px #ff0000;
+  align-self: flex-start;
+  margin-top: 5px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+  flex-shrink: 0;
 }
 
 .mark-read-dot:hover {
