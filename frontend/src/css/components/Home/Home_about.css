@@ -20,7 +20,6 @@
   font-family:'Inter',sans-serif;
 }
 
-/* grid background */
 .about-section::before{
   content:"";
   position:absolute;
@@ -35,7 +34,6 @@
   z-index:0;
 }
 
-/* ❌ removed red diagonal bg */
 .about-section::after{
   display:none;
 }
@@ -58,7 +56,6 @@
   flex:1;
 }
 
-/* ✅ red used here */
 .about-tag{
   color:var(--red);
   font-weight:800;
@@ -76,7 +73,6 @@
   margin-bottom:25px;
 }
 
-/* ✅ red highlight */
 .about-title span{
   color:var(--red);
 }
@@ -96,7 +92,6 @@
   margin-top:25px;
 }
 
-/* ❌ removed red bg → keep black */
 .about-card{
   background:#000;
   color:#fff;
@@ -110,7 +105,6 @@
   border:1px solid transparent;
 }
 
-/* ✅ red icons */
 .about-card svg{
   color:var(--red);
   font-size:20px;
@@ -141,7 +135,6 @@
   filter:grayscale(0);
 }
 
-/* ❌ remove red bg → use white with red border */
 .impact-box{
   position:absolute;
   bottom:-35px;
@@ -150,14 +143,14 @@
   color:#000;
   padding:30px 45px;
   text-align:center;
-  border:2px solid var(--red); /* ✅ red accent */
+  border:2px solid var(--red); 
   box-shadow:12px 12px 0 #000;
 }
 
 .impact-box h2{
   font-size:48px;
   font-weight:900;
-  color:var(--red); /* ✅ red text */
+  color:var(--red); 
 }
 
 .impact-box p{
@@ -165,7 +158,6 @@
   letter-spacing:2px;
 }
 
-/* responsive same */
 @media(max-width:1024px){
   .about-container{
     flex-direction:column;

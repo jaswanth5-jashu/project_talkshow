@@ -1,5 +1,5 @@
 .guests-page {
-  padding: 10px 0 100px; /* Reduced top padding */
+  padding: 10px 0 100px; 
   background-color: #ffffff;
   background-image: 
     radial-gradient(rgba(255, 0, 0, 0.05) 2px, transparent 2px),
@@ -8,8 +8,8 @@
   background-size: 30px 30px, 80px 80px, 80px 80px;
   min-height: 100vh;
   position: relative;
-  overflow: visible; /* Fixed: Allow search results from header to show */
-  z-index: 1; /* Fixed: Stay below the header */
+  overflow: visible; 
+  z-index: 1; 
 }
 
 .guests-page::after {

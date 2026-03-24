@@ -41,7 +41,6 @@
   font-size: 1.1rem;
 }
 
-/* 🔍 Navigation & Search Bar - Redesigned */
 .profile-header-actions {
   display: flex;
   justify-content: space-between;
@@ -99,7 +98,6 @@
   outline: none;
 }
 
-/* Results Dropdown */
 .profile-search-results {
   position: absolute;
   top: calc(100% + 20px);
@@ -111,7 +109,7 @@
   border: 1px solid #f0f0f0;
   max-height: 500px;
   overflow-y: auto;
-  z-index: 10001; /* Fixed: Stay above all content */
+  z-index: 10001; 
   animation: guestSlideIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
@@ -204,7 +202,6 @@
   100% { transform: rotate(360deg); }
 }
 
-
 .profile-page::before {
   content: "";
   position: absolute;
@@ -235,7 +232,6 @@
   z-index: 10;
 }
 
-
 .profile-left {
   position: sticky;
   top: 120px;
@@ -247,7 +243,7 @@
   aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08); /* Talent-Style Shadow */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08); 
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
@@ -264,7 +260,6 @@
   border-radius: 12px;
   box-shadow: 0 10px 20px rgba(255, 0, 0, 0.2);
 }
-
 
 .profile-right {
   display: flex;
@@ -314,18 +309,17 @@
   letter-spacing: 2px;
 }
 
-
 .guest-meta-grid, .guest-bio-section, .server-check-dashboard {
   background: #ffffff;
   padding: 40px;
   border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Talent-Style Card */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); 
   margin-bottom: 30px;
   width: 100%;
 }
 
-.guest-meta-grid { margin-left: -40px; } /* Stagger left */
-.server-check-dashboard { margin-left: 40px; width: calc(100% - 40px); } /* Stagger right */
+.guest-meta-grid { margin-left: -40px; } 
+.server-check-dashboard { margin-left: 40px; width: calc(100% - 40px); } 
 
 .meta-item {
   display: flex;
@@ -377,7 +371,6 @@
   color: #000;
 }
 
-
 .guest-video {
   max-width: 1300px;
   margin: 0 auto;
@@ -414,7 +407,7 @@
   background: #ffffff;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Unified Talent Card Shadow */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); 
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -513,7 +506,6 @@
   .video-grid { grid-template-columns: 1fr; }
 }
 
-/* 🎬 Promo Overlay Modal - Premium Style */
 .promo-overlay-modal {
   position: fixed;
   top: 0;

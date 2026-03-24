@@ -13,13 +13,11 @@
   position:relative;
   overflow:hidden;
 
-  /* 🔥 pure clean background */
-  background:#ffffff;  /* change to #f5f5f5 if you want light grey */
+  background:#ffffff;  
 
   color:#111;
 }
 
-/* 🔥 clean white grid (very subtle) */
 .purpose-section::before{
   content:"";
   position:absolute;
@@ -47,7 +45,6 @@
   z-index:0;
 }
 
-/* ❌ removed pink glow completely */
 .purpose-section::after{
   display:none;
 }

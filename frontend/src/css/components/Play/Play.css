@@ -1,4 +1,3 @@
-/* PLAY PAGE - MODERN NEAT REDESIGN */
 :root {
   --neat-bg: #0a0a0b;
   --neat-surface: #161618;
@@ -31,7 +30,6 @@
   gap: 40px;
 }
 
-/* NAVIGATION */
 .theater-nav {
   display: flex;
   justify-content: flex-start;
@@ -62,7 +60,6 @@
   transform: translateX(-5px);
 }
 
-/* HEADER SECTION */
 .theater-header-cinematic {
   display: flex;
   flex-direction: column;
@@ -219,7 +216,6 @@
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
 }
 
-/* MAIN CONTENT GRID */
 .theater-main-content {
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -227,7 +223,6 @@
   align-items: start;
 }
 
-/* VIDEO SECTION */
 .video-stage {
   display: flex;
   flex-direction: column;
@@ -272,7 +267,6 @@
   margin: 0;
 }
 
-/* SIDEBAR / CHAT */
 .theater-sidebar {
   position: sticky;
   top: 40px;
@@ -436,7 +430,6 @@
   opacity: 1;
 }
 
-/* VIDEO HUD */
 .cinematic-hud {
   position: absolute;
   inset: 0;
@@ -555,7 +548,6 @@
   color: #fff;
 }
 
-/* RESPONSIVE */
 @media (max-width: 1400px) {
   .theater-container { padding: 40px; }
   .cinematic-title-primary { font-size: 3.5rem; }

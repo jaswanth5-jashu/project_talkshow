@@ -24,7 +24,6 @@
   padding: 20px;
 }
 
-/* Dynamic Animated Background */
 .auth::before, .auth::after {
   content: '';
   position: absolute;
@@ -112,7 +111,7 @@
 
 .form p.subtitle {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.85); /* Increased visibility */
+  color: rgba(255, 255, 255, 0.85); 
   margin: 0 0 15px 0;
   font-weight: 400;
   letter-spacing: 0.2px;
@@ -155,7 +154,6 @@
   color: var(--text-muted);
 }
 
-/* Custom Select styling */
 .auth-select {
   width: 100%;
   padding: 16px 20px;
@@ -318,7 +316,6 @@
   color: #fff;
 }
 
-/* OTP Section */
 .otpSection {
   display: flex;
   flex-direction: column;
@@ -378,7 +375,6 @@
   text-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
 }
 
-/* File Input Wrapper */
 .file-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -426,7 +422,6 @@
   min-width: 0;
 }
 
-/* Messages */
 .msg-box {
   margin-bottom: 20px;
   padding: 14px;
@@ -457,7 +452,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Switch at bottom */
 .switch {
   margin-top: 25px;
   text-align: center;
@@ -484,7 +478,6 @@
   text-decoration: underline;
 }
 
-/* Animations */
 .animate-in {
   animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   display: flex;
@@ -497,13 +490,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsiveness */
 @media (max-width: 500px) {
   .card {
     padding: 30px 20px;
     border-radius: 20px;
   }
-  
+
   .form h1 {
     font-size: 28px;
   }
@@ -512,7 +504,7 @@
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .otpBoxes input {
     width: 40px;
     height: 50px;
@@ -553,4 +545,3 @@
 .password-checklist p.unmet {
   color: rgba(255, 255, 255, 0.2);
 }
-

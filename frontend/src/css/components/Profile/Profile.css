@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;700;900&display=swap');
 
 :root {
-  --neat-primary: #ff0033; /* Vibrant Red */
+  --neat-primary: #ff0033; 
   --neat-primary-hover: #cc0029;
-  --neat-bg: #050505; /* Deep Black */
-  --neat-text: #ffffff; /* Crisp White */
-  --neat-text-dim: #a3a3a3; /* Light Gray for dim text */
-  --neat-border: #222222; /* Dark Gray Border */
-  --neat-card-bg: #111111; /* Slightly lighter black for cards */
-  --neat-shadow: 0 10px 40px rgba(255, 0, 51, 0.1); /* Red tinted shadow */
+  --neat-bg: #050505; 
+  --neat-text: #ffffff; 
+  --neat-text-dim: #a3a3a3; 
+  --neat-border: #222222; 
+  --neat-card-bg: #111111; 
+  --neat-shadow: 0 10px 40px rgba(255, 0, 51, 0.1); 
   --glass-blur: blur(20px);
 }
 
@@ -38,10 +38,6 @@
   position: relative;
   z-index: 1;
 }
-
-/* =========================================================================
-   HERO SECTION
-   ========================================================================= */
 
 .profile-hero-card {
   display: flex;
@@ -328,10 +324,6 @@
   transform: translateY(-3px);
 }
 
-/* =========================================================================
-   SETTINGS GRID
-   ========================================================================= */
-
 .settings-grid-cinematic {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -508,10 +500,6 @@
   border-color: #fff;
   box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
 }
-
-/* =========================================================================
-   VIDEOS & SUBMISSIONS GRIDS
-   ========================================================================= */
 
 .section-title-premium {
   font-size: 2.8rem;
@@ -710,10 +698,6 @@
   transform: scale(1.1);
   box-shadow: 0 8px 20px rgba(255,255,255,0.2);
 }
-
-/* =========================================================================
-   SUBMISSIONS SECTION 
-   ========================================================================= */
 
 .user-videos-section {
   margin-top: 70px;
@@ -936,10 +920,6 @@
   transform: translateY(-4px);
   box-shadow: 0 12px 25px rgba(255, 0, 51, 0.3);
 }
-
-/* =========================================================================
-   MODAL & ALERTS
-   ========================================================================= */
 
 .restriction-notice {
   margin-top: 15px;
@@ -1170,10 +1150,6 @@
   text-transform: uppercase;
 }
 
-/* =========================================================================
-   OTP SECTION
-   ========================================================================= */
-
 .otp-step {
   display: flex;
   flex-direction: column;
@@ -1230,10 +1206,6 @@
 .animate-in {
   animation: fadeInDown 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-
-/* =========================================================================
-   MEDIA QUERIES
-   ========================================================================= */
 
 @media (max-width: 1024px) {
   .hero-name-primary, .hero-name { font-size: 3.2rem; }
@@ -1301,9 +1273,6 @@
   color: var(--neat-text-dim);
   opacity: 0.3;
 }
-/* =========================================================================
-   DANGER ZONE RECOILING
-   ========================================================================= */
 
 .danger-zone {
   border: 1px solid rgba(255, 0, 51, 0.2) !important;

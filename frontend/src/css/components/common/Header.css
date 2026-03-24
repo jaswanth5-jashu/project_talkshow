@@ -217,24 +217,18 @@ display: none;
   }
 }
 
-/* Mobile Responsive Media Query */
 @media (max-width: 768px) {
 
 }
 
-
-/* Tablet Responsive Media Query */
 @media (max-width: 1024px) {
 
 }
 
-
-/* Mobile Small Responsive Media Query */
 @media (max-width: 480px) {
 
 }
 
-/* Notifications */
 .notification-wrapper {
   position: relative;
   display: flex;

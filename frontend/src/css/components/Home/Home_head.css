@@ -29,7 +29,6 @@
   pointer-events: none;
 }
 
-/* Background grid */
 .hero::before {
   content: "";
   position: absolute;
@@ -78,7 +77,7 @@
 .hero-title-inline {
   font-size: clamp(40px, 6vw, 85px);
   font-weight: 1000;
-  /* Extra bold */
+
   color: var(--black);
   line-height: 1;
   text-transform: uppercase;
@@ -99,7 +98,6 @@
   line-height: 1.6;
 }
 
-/* 🎢 Carousel Styling */
 .hero-carousel-container {
   width: 100%;
   padding: 40px 0;
@@ -417,7 +415,6 @@
   }
 }
 
-/* Search results styles */
 .hero-search-results {
   position: absolute;
   top: 100%;
@@ -497,7 +494,6 @@
   }
 }
 
-/* 🎨 Swiper Navigation & Pagination Customization */
 .mySwiper .swiper-button-next,
 .mySwiper .swiper-button-prev {
   color: var(--black);

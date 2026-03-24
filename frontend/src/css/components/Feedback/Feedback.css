@@ -33,7 +33,6 @@
   position: relative;
 }
 
-/* 🔥 BIG HERO HEADING */
 .feedback-hero h1 {
   font-size: 5.5rem;
   font-weight: 950;
@@ -193,7 +192,6 @@
   box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
 }
 
-/* 🔥 UPDATED H3 (USERNAME STYLE) */
 .user-info h3 {
   font-size: 1.4rem;
   font-weight: 800;

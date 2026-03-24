@@ -241,18 +241,16 @@
         padding: 40px;
         overflow-y: auto;
     }
-    
+
     .side-metadata {
         margin-top: 40px;
     }
-    
+
     .meta-title {
         font-size: 2.5rem;
     }
 }
 
-
-/* Mobile Responsive Media Query */
 @media (max-width: 768px) {
     .main-stage {
         padding: 20px;
@@ -283,8 +281,6 @@
     }
 }
 
-
-/* Tablet Responsive Media Query */
 @media (max-width: 1024px) {
     .main-stage {
         padding: 30px;
@@ -294,8 +290,6 @@
     }
 }
 
-
-/* Mobile Small Responsive Media Query */
 @media (max-width: 480px) {
     .meta-title {
         font-size: 1.5rem;

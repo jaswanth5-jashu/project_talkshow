@@ -1,14 +1,13 @@
 .episodes_head {
-  padding: 120px 6% 40px; /* Reduced bottom padding */
-  background-color: #ffffff; /* white background */
-  text-align: left; /* like image */
+  padding: 120px 6% 40px; 
+  background-color: #ffffff; 
+  text-align: left; 
   position: relative;
-  overflow: visible; /* Fixed: Allow search results to overflow */
-  z-index: 100; /* Fixed: Stay above the grid */
+  overflow: visible; 
+  z-index: 100; 
   border-bottom: none;
 }
 
-/* ❌ remove all effects */
 .episodes_head::before,
 .episodes_head::after {
   display: none;
@@ -20,7 +19,6 @@
   position: relative;
 }
 
-/* 🔴 small red tag */
 .episodes_tag {
   color: #ff0000;
   font-size: 14px;
@@ -30,7 +28,6 @@
   margin-bottom: 20px;
 }
 
-/* 🔥 TITLE */
 .episodes_title {
   font-family: 'Inter', sans-serif;
   font-size: 72px;
@@ -41,7 +38,6 @@
   line-height: 1;
 }
 
-/* 🔥 second word style */
 .episodes_title span {
   display: inline;
   color: #000000;
@@ -50,12 +46,10 @@
   margin-left: 10px;
 }
 
-/* remove underline */
 .episodes_title::after {
   display: none;
 }
 
-/* description */
 .episodes_desc {
   font-family: 'Inter', sans-serif;
   font-size: 20px;
@@ -66,7 +60,6 @@
   font-weight: 400;
 }
 
-/* 🔍 Search Bar - Premium Design */
 .episodes_search {
   display: flex !important;
   align-items: center;
@@ -113,10 +106,9 @@
 .episodes_search input::placeholder {
   color: #888;
   font-weight: 400;
-  opacity: 1; /* Firefox */
+  opacity: 1; 
 }
 
-/* Results Dropdown */
 .episodes-search-results {
   position: absolute;
   top: calc(100% + 15px);
@@ -126,7 +118,7 @@
   border: 2px solid #000;
   max-height: 450px;
   overflow-y: auto;
-  z-index: 10001; /* Fixed: Stay above headers and grids */
+  z-index: 10001; 
   box-shadow: 25px 25px 50px rgba(0,0,0,0.15);
   animation: slideFadeDown 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -218,7 +210,6 @@
   100% { transform: rotate(360deg); }
 }
 
-/* responsive */
 @media (max-width: 900px) {
   .episodes_title {
     font-size: 42px;

@@ -11,7 +11,7 @@
   border: 1.5px solid #eaeaea;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   opacity: 0;
-  
+
 }
 
 .guest-card img {
@@ -76,7 +76,6 @@
   margin-top: 4px;
   font-weight: 500;
 }
-
 
 .animate-neat-in {
   animation: neatFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;

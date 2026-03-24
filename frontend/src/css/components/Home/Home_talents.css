@@ -130,13 +130,13 @@
   .talents-section {
     padding: 60px 5%;
   }
-  
+
   .talents-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
-  
+
   .talents-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
