@@ -4,6 +4,10 @@ function getTalentStories() {
   return apiClient.get("/talent/").then((res) => res.data);
 }
 
+export function getNewTalents() {
+  return apiClient.get("/talent/new/").then((res) => res.data);
+}
+
 export function getTalentById(id) {
   return apiClient.get(`/talent/${id}/`).then((res) => res.data);
 }

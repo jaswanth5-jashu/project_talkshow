@@ -16,4 +16,8 @@ export function getEpisodeById(id) {
   return apiClient.get(`/episode/${id}/`).then((res) => res.data);
 }
 
+export function getNewEpisodes() {
+  return apiClient.get("/episode/new/").then((res) => res.data);
+}
+
 export default getGuests;

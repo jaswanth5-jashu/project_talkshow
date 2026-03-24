@@ -23,7 +23,6 @@ class VideoCommentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     full_name = serializers.CharField(source='user.full_name', read_only=True)
     user_profile = serializers.ImageField(source='user.profile', read_only=True)
-    user_profile = serializers.ImageField(source='user.profile', read_only=True)
     class Meta:
         model = VideoComment
         fields = ['id', 'user', 'username', 'full_name', 'user_profile', 'talent_video', 'episode', 'text', 'created_at']
@@ -154,6 +153,7 @@ class EpisodeSerializer(serializers.ModelSerializer):
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     comments_count = serializers.IntegerField(source='comments.count', read_only=True)
     is_liked = serializers.SerializerMethodField()
+    guest_name = serializers.CharField(source='guest.name', read_only=True)
     
     def get_is_liked(self, obj):
         request = self.context.get('request')

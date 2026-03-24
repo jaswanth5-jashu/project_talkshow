@@ -52,8 +52,8 @@ def send_cool_email(subject, title, message, to_email, attachment=None):
             except Exception:
                 pass
         msg.send()
-    except Exception as e:
-        print(f"Error sending email: {e}")
+    except Exception:
+        pass
 
 class RegisterView(APIView):
     def post(self, request):
@@ -295,7 +295,12 @@ class ContactView(generics.ListCreateAPIView):
         return response
 
 class EpisodeView(generics.ListCreateAPIView):
-    queryset = Episode.objects.all()
+    queryset = Episode.objects.filter(is_active=True).order_by('-upload_datetime')
+    serializer_class = EpisodeSerializer
+    permission_classes = [permissions.AllowAny]
+
+class NewEpisodeView(generics.ListAPIView):
+    queryset = Episode.objects.filter(is_new=True, is_active=True).order_by('-upload_datetime')
     serializer_class = EpisodeSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -305,6 +310,16 @@ class UpdateEpisodeView(generics.RetrieveUpdateDestroyAPIView):
 
 class TalentView(generics.ListAPIView):
     queryset = Talent.objects.all()
+    serializer_class = TalentSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+class NewTalentView(generics.ListAPIView):
+    queryset = Talent.objects.filter(is_new=True).order_by('-id')[:10]
     serializer_class = TalentSerializer
     permission_classes = [permissions.AllowAny]
 
