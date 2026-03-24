@@ -62,7 +62,7 @@ function Home_head() {
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
-  
+
   const handleResultClick = (userId) => {
     if (!isAuthenticated) {
       setShowGuard(true);
@@ -109,7 +109,7 @@ function Home_head() {
   return (
     <section className="hero">
       <div className="hero-overlay"></div>
-      
+
       <div className="hero-container">
         <div className="hero-top-section">
           <span className="live-tag">
@@ -193,57 +193,57 @@ function Home_head() {
           </div>
 
           <div className="hero-search-wrapper" ref={searchRef}>
-             <div className="hero-search-bar">
-                <FiSearch className="search-icon" />
-                <input 
-                  type="text" 
-                  placeholder="Search talents, episodes, guests..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
-                />
-                {isSearching && <div className="search-loader"></div>}
-              </div>
+            <div className="hero-search-bar">
+              <FiSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search talents, episodes, guests..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.length >= 2 && setShowSearchResults(true)}
+              />
+              {isSearching && <div className="search-loader"></div>}
+            </div>
 
-              {showSearchResults && (
-                <div className="hero-search-results">
-                  {searchResults.length > 0 ? (
-                    searchResults.map(result => (
-                      <div 
-                        key={result.id} 
-                        className="search-result-item"
-                        onClick={() => handleResultClick(result.id)}
-                      >
-                        <div className="result-avatar">
-                          <img src={getImageUrl(result.profile)} alt={result.username} />
+            {showSearchResults && (
+              <div className="hero-search-results">
+                {searchResults.length > 0 ? (
+                  searchResults.map(result => (
+                    <div
+                      key={result.id}
+                      className="search-result-item"
+                      onClick={() => handleResultClick(result.id)}
+                    >
+                      <div className="result-avatar">
+                        <img src={getImageUrl(result.profile)} alt={result.username} />
+                      </div>
+                      <div className="result-info">
+                        <div className="result-top">
+                          <span className="result-name">{result.full_name || result.username}</span>
+                          <span className="result-role">{result.role}</span>
                         </div>
-                        <div className="result-info">
-                          <div className="result-top">
-                            <span className="result-name">{result.full_name || result.username}</span>
-                            <span className="result-role">{result.role}</span>
-                          </div>
-                          <div className="result-mid">
-                            <p className="result-bio-preview">
-                              {result.bio && !result.bio.includes(':') ? result.bio.substring(0, 120) : "Passionate about sharing talent and inspiring the community."}
-                            </p>
-                          </div>
-                          <div className="result-bottom">
-                            <span className="result-videos">{result.video_count} Videos</span>
-                          </div>
+                        <div className="result-mid">
+                          <p className="result-bio-preview">
+                            {result.bio && !result.bio.includes(':') ? result.bio.substring(0, 120) : "Passionate about sharing talent and inspiring the community."}
+                          </p>
+                        </div>
+                        <div className="result-bottom">
+                          <span className="result-videos">{result.video_count} Videos</span>
                         </div>
                       </div>
-                    ))
-                  ) : searchQuery.length >= 2 && !isSearching ? (
-                    <div className="search-no-results">
-                       <FiSearch />
-                       <div className="no-res-content">
-                          <h4>No members found for "{searchQuery}"</h4>
-                          <p>Try searching for another name, username or talent.</p>
-                       </div>
                     </div>
-                  ) : null}
-                </div>
-              )}
+                  ))
+                ) : searchQuery.length >= 2 && !isSearching ? (
+                  <div className="search-no-results">
+                    <FiSearch />
+                    <div className="no-res-content">
+                      <h4>No members found for "{searchQuery}"</h4>
+                      <p>Try searching for another name, username or talent.</p>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
           </div>
 
           <div className="hero-stats-row">
@@ -264,9 +264,9 @@ function Home_head() {
       </div>
 
       {showGuard && (
-        <AuthGuard 
-          onClose={() => setShowGuard(false)} 
-          message="Join the inner circle of talent! Please login or register to view full profiles and exclusive content." 
+        <AuthGuard
+          onClose={() => setShowGuard(false)}
+          message="Join the inner circle of talent! Please login or register to view full profiles and exclusive content."
         />
       )}
     </section>
